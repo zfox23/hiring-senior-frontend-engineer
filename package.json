@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "postinstall": "husky install",
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
@@ -56,8 +55,6 @@
         "eslint-config-next": "11.1.2",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-graphql": "^4.0.0",
-        "husky": "^7.0.2",
-        "lint-staged": "^11.2.3",
         "postcss": "^7",
         "postcss-cli": "^7",
         "prettier": "^2.4.1",
