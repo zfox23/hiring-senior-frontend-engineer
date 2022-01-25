@@ -11,8 +11,9 @@ In addition, your solution won't be viewed on a mobile device but it does need t
 You'll use a publicly available GraphQL endpoint with data from SpaceX launches, found here: https://api.spacex.land/graphql/. 
 
 ## The Design
-Figma link: 
-Design system link: 
+Figma link: https://www.figma.com/proto/4YRep3EnjvbRhlgJnZ4fMl/Tailwind-Figma-UI?node-id=2633%3A44067&scaling=min-zoom&page-id=2632%3A42983&starting-point-node-id=2633%3A44067
+
+Design system link: https://app.sympli.io/p/b7af245c13a878803bead2bfc9b2fcf7e4d75002b9:61eecfbd516143575ba7a12b
 
 ## Components & Features
 1. Summary statistic cards
