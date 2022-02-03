@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Listbox, Popover, Switch, Transition } from '@headlessui/react';
-import { setPageTheme } from '../helpers/helperFunctions';
+import { launchpad, launchpadAll, setPageTheme } from '../helpers/helperFunctions';
 import { usePopper } from 'react-popper';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
@@ -14,11 +14,6 @@ const LAUNCH_SITES = gql`
         }
     }
 `;
-
-interface launchpad {
-    id: string;
-    name: string;
-}
 
 const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: launchpad, active: Boolean, selected: Boolean }) => {
     return (
@@ -35,10 +30,7 @@ const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: launchpad
     )
 }
 
-const launchpadAll = { "id": "custom_all", "name": "All Launchpads" };
-
-const LaunchSiteSelector = () => {
-    const [selectedLaunchpad, setSelectedLaunchpad] = useState<launchpad>(launchpadAll);
+const LaunchSiteSelector = ({selectedLaunchpad, setSelectedLaunchpad}: {selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void}) => {
     const { loading, error, data } = useQuery(LAUNCH_SITES);
 
     const popperElRef = React.useRef(null);
@@ -127,7 +119,7 @@ const LaunchSiteSelector = () => {
     )
 }
 
-export const Header = () => {
+export const Header = ({selectedLaunchpad, setSelectedLaunchpad}: {selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void}) => {
     const [darkModeEnabled, setDarkModeEnabled] = useState(typeof window !== 'undefined' && localStorage.theme === 'dark');
     const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);;
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);;
@@ -145,7 +137,7 @@ export const Header = () => {
     });
 
     return (
-        <header className='flex justify-between w-full'>
+        <header className='flex justify-between w-full mb-8'>
             <h1 className='text-2xl font-bold transition-colors text-dark-blue dark:text-white'>SpaceX Mission Dashboard</h1>
             <div className='flex gap-2'>
                 <Popover className="relative">
@@ -163,12 +155,12 @@ export const Header = () => {
                                 leaveTo="-translate-y-2 opacity-0"
                             >
                                 <Popover.Panel
-                                    className="bg-white dark:bg-dark-gray-darker transition-colors"
+                                    className="bg-white dark:bg-dark-gray-darker transition-colors shadow-md rounded-md"
                                     ref={setPopperElement}
                                     style={styles.popper}
                                     {...attributes.popper}>
                                     <Switch.Group>
-                                        <div className="flex items-center p-2 h-12 shadow-md rounded-md">
+                                        <div className="flex items-center p-2 h-12">
                                             <Switch.Label className="mr-4 w-24 text-sm font-extralight transition-colors text-slate-blue dark:text-dark-gray-lighter-still">Dark Mode</Switch.Label>
                                             <Switch
                                                 checked={darkModeEnabled}
@@ -192,7 +184,7 @@ export const Header = () => {
                         </>
                     )}
                 </Popover>
-                <LaunchSiteSelector />
+                <LaunchSiteSelector selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
             </div>
         </header>
     )

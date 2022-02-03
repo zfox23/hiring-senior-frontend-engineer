@@ -9,7 +9,7 @@ import "@fontsource/metropolis/700.css";
 //import styles from '../styles/Home.module.css'
 import React, { useEffect, useState } from 'react';
 import { Header } from '../components/Header';
-import { setPageTheme } from '../helpers/helperFunctions';
+import { launchpadAll, setPageTheme } from '../helpers/helperFunctions';
 import useBodyClass from '../hooks/useBodyClass';
 import {
     ApolloClient,
@@ -18,6 +18,8 @@ import {
     useQuery,
     gql
 } from "@apollo/client";
+import { SummaryCards } from '../components/SummaryCards';
+import { PayloadCountByNationalityCard } from '../components/PayloadCountByNationality';
 
 const client = new ApolloClient({
     uri: 'https://api.spacex.land/graphql/',
@@ -35,9 +37,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 const Home: NextPage = () => {
-    const [launchSite, setLaunchSite] = useState(null);
+    const [selectedLaunchpad, setSelectedLaunchpad] = useState(launchpadAll);
 
-    useBodyClass(['min-w-screen', 'min-h-screen', 'transition-colors', 'bg-gray-light', 'dark:bg-dark-gray-dark'])
+    useBodyClass(['min-w-screen', 'min-h-screen', 'transition-colors', 'bg-gray-light', 'dark:bg-dark-gray-medium'])
 
     useEffect(() => {
         setPageTheme();
@@ -46,8 +48,13 @@ const Home: NextPage = () => {
     return (
         <ApolloProvider client={client}>
             <div className='container mx-auto p-8'>
-                <Header />
-                <main></main>
+                <Header selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
+                <main className='flex flex-col gap-4'>
+                    <SummaryCards selectedLaunchpad={selectedLaunchpad} />
+                    <div className='flex gap-4'>
+                        <PayloadCountByNationalityCard selectedLaunchpad={selectedLaunchpad} />
+                    </div>
+                </main>
             </div>
         </ApolloProvider>
     )

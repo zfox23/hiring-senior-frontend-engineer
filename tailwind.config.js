@@ -30,6 +30,8 @@ module.exports = {
         'dark-blue': '#111827',
         'blue': "#0981C3",
         'slate-blue': "#6B7280",
+        'dark-blue': "#111827",
+        'dark-purple': "#1C1F37",
       },
       fontFamily: {
         'sans': ['Metropolis', ...defaultTheme.fontFamily.sans]
