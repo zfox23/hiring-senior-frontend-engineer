@@ -27,6 +27,7 @@ export interface payloadsData {
 }
 export interface missionsData {
     id: string;
+    name?: string;
     payloads: [payloadsData];
 }
 export interface launchSummaryData {

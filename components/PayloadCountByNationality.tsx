@@ -31,9 +31,9 @@ const PAYLOAD_COUNT_BY_NATIONALITY_DATA = gql`
 
 const NationalityHeader = ({ isDarkTheme }: { isDarkTheme: Boolean }) => {
     return (
-        <div className='flex items-center border-b-4 border-gray-light dark:border-dark-gray-medium'>
-            <h2 className='text-dark-purple dark:text-white transition-colors text-xl font-semibold p-3'>Payload Count by Nationality</h2>
-            <QuestionMarkCircleIcon data-tip="" data-for='countHelp' className='w-5 h-5 text-dark-purple dark:text-white transition-colors' />
+        <div className='flex items-center border-b-4 p-3 transition-colors border-gray-light dark:border-dark-gray-medium'>
+            <h2 className='text-dark-purple dark:text-white transition-colors text-xl font-semibold'>Payload Count by Nationality</h2>
+            <QuestionMarkCircleIcon data-tip="" data-for='countHelp' className='w-5 h-5 ml-2 mb-0.5 text-dark-purple dark:text-white transition-colors' />
             <NoSsr>
                 <ReactTooltip
                     id="countHelp"
@@ -44,7 +44,7 @@ const NationalityHeader = ({ isDarkTheme }: { isDarkTheme: Boolean }) => {
                     backgroundColor={`${isDarkTheme ? "#FFFFFF" : "#111827"}`}
                     // fullConfig.theme.colors['dark-gray-light']
                     arrowColor={`${isDarkTheme ? "#FFFFFF" : "#3B3B3C"}`}>
-                    Pie chart shows all nationalities. Data table only shows top 5.
+                    This data displays which countries are responsible for the payloads launched at the selected launch site.
                 </ReactTooltip>
             </NoSsr>
         </div>
@@ -136,8 +136,7 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
             }
         });
 
-        console.log(tempPieChartData)
-        setPieChartData(tempPieChartData);
+        setPieChartData(tempPieChartData.sort((a, b) => { return b.value - a.value; }));
     }, [data]);
 
     const makeTooltipContent = (hoveredData: pieChartData) => {
@@ -153,15 +152,17 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
     const isDarkTheme = typeof window !== 'undefined' && localStorage.theme === "dark";
 
     return (
-        <div className='flex flex-col w-1/2 bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
+        <div className='flex flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
             <NationalityHeader isDarkTheme={isDarkTheme} />
-            <div className='flex justify-center items-center p-8 gap-4'>
-                {
-                    loading ?
+            {
+                loading ?
+                    <div className='flex justify-center items-center p-12'>
                         <LoadingSpinner className='h-7 w-7' />
-                        :
-                        <div>
-                            <div className='w-1/3' data-tip="" data-for="chart">
+                    </div>
+                    :
+                    pieChartData && pieChartData?.length > 0 ?
+                        <div className='flex justify-center items-start p-4 gap-8'>
+                            <div className='max-w-[120px]' data-tip="" data-for="chart">
                                 <PieChart
                                     data={pieChartData}
                                     lineWidth={15}
@@ -189,12 +190,36 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
                                     />
                                 </NoSsr>
                             </div>
-                            <div className='w-2/3'>
-
+                            <div className='flex flex-col'>
+                                <table className="table-auto">
+                                    <thead className='text-sm transition-colors text-slate-blue dark:text-white text-left'>
+                                        <tr>
+                                            <th className='font-light'>NATIONALITY</th>
+                                            <th className='font-light'>PAYLOAD COUNT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
+                                        {
+                                            pieChartData ?
+                                                pieChartData.map((data: pieChartData, idx, array) => (
+                                                    <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
+                                                        <td className='flex items-center py-1.5 mr-4'>
+                                                            <span className={`rounded-full w-2 h-2 mr-1 mb-0.5`} style={{ "backgroundColor": data.color }} />
+                                                            <span>{data.title}</span></td>
+                                                        <td>{data.value}</td>
+                                                    </tr>
+                                                ))
+                                                : null
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                }
-            </div>
+                        :
+                        <p className='text-dark-purple dark:text-white transition-colors text-l font-medium p-4 text-center'>
+                            SpaceX has not launched any payloads at this site.
+                        </p>
+            }
         </div>
     )
 }

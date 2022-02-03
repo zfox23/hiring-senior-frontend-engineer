@@ -20,6 +20,7 @@ import {
 } from "@apollo/client";
 import { SummaryCards } from '../components/SummaryCards';
 import { PayloadCountByNationalityCard } from '../components/PayloadCountByNationality';
+import { TopFiveMissionsCard } from '../components/TopFiveMissions';
 
 const client = new ApolloClient({
     uri: 'https://api.spacex.land/graphql/',
@@ -51,8 +52,9 @@ const Home: NextPage = () => {
                 <Header selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
                 <main className='flex flex-col gap-4'>
                     <SummaryCards selectedLaunchpad={selectedLaunchpad} />
-                    <div className='flex gap-4'>
+                    <div className='flex flex-wrap gap-4 justify-center items-start'>
                         <PayloadCountByNationalityCard selectedLaunchpad={selectedLaunchpad} />
+                        <TopFiveMissionsCard selectedLaunchpad={selectedLaunchpad} />
                     </div>
                 </main>
             </div>

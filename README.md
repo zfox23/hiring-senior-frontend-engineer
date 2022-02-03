@@ -108,12 +108,23 @@ Here are my initial questions and assumptions I came up with while reading this 
     - A general note: It would be faster for me to query the GraphQL endpoint on an app level without any sort of `find:` filter, and then pass the data down to each component, at which point each component could filter the data. However, I want to ensure that each of these Components is self-contained, and I want to show off that I can do GraphQL queries with variables. 😄
     - I started off using a simple dictionary to store the data necessary to create this Component's UI. The dictionary's key is the "Nationality" of the payload, and the value associated with that key is the number of payloads associated for that nationality. This data structure isn't very extensible, but that's OK. Simplicity here is king, while the requirements for the component are very well-defined.
         - Later, after choosing to use `react-minimal-pie-chart`, I decided to go with a slightly more complicated data structure to make compatibility with the pie chart library simple.
-    - Is the pie chart supposed to show _all_ of the relevant nationalities, or just the top 5? The latter doesn't make much sense from a data visualization perspective (it is _likelier_ that "X percentage of all" "X percentage of top 5"), so I'm going to assume the chart should show all of the filtered nationalities. I'll display the top five in the table on the right side of the component, and I'll put some version of this information in the (?) tooltip.
+    - Are the pie chart and data table supposed to show _all_ of the relevant nationalities, or just the top 5? The latter doesn't make much sense from a data visualization perspective (it is _likelier_ that "X percentage of all" "X percentage of top 5"), so I'm going to assume the pie chart and data table should show all of the filtered nationalities.
     - I started writing my own pie chart library, but decided that would take too much time. Instead, I'll use [`react-minimal-pie-chart`](https://www.npmjs.com/package/react-minimal-pie-chart).
     - I created a utility function to return a stable hex color given a string. This lets me associate each unique nationality with a unique color.
     - The "Nationality" and "Payload Count" headers in the mockup are a different typeface from the rest. I'm not going to use a different typeface for my submission (not worth the extra time).
     - I'm using `react-tooltip` to make tooltip integration easier. Don't want to write my own library for that, either.
     - The cursor targets for the pie chart as designed are too small for my liking, so that's something I'd like to talk to the designer about.
+    - The margin between the table header and the table body in the mockup is larger than what I implemented. I don't want to spend too much time trying to re-style `<table>` elements.
+6. Onto the "Top 5 Missions" component.
+    - Same as the last component - I'm going to be able to use much of what I learned from implementing the previous component here.
+    - I'm finding myself having to come up with untenable names for colors because there are so many different colors in this design. I would talk to the designer about the color palette used in the app to minimize the number of colors used, or come up with better names for the colors.
+    - I chose to align the items in the flex container holding the "payload count" and "top 5 missions" components to `items-start`. This can create some space below the shorter card between the two, if one is shorter than the other. I believe this design to be preferable to the card itself growing taller.
+    - I am quite proud of this data table. 😀
+    - Regarding the black scale bars, to reiterate a design assumption from above:
+        - 0% === "0kg", 100% === "max payload mass for the top 5 missions shown"
+            - This means that the top mission will always show a full "black bar."
+        - I know for sure that this wasn't the designer's intention - else the top bar in the mock's data table would be full - so I'd want to talk to the designer about this. However, I think my design does a good job of showing relative payload masses for those top five displayed missions.
+    - That was the fastest component I've built so far! I couldn't have done this so quickly without the proper architecture I developed in the previous components.
 
 
 -----
