@@ -57,6 +57,7 @@ Here are my initial questions and assumptions I came up with while reading this 
             - Yikes, nevermind: the "vector" format supplied by Sympli is `.pdf`, which is unusable in this context, and I don't want to convert them. I'll use the `.png` assets provided by Sympli instead, but the `1x` versions of those assets won't scale nicely, and I'm not going to put the time in to figure out how to make use of the scaled bitmap assets in this app. If this were a real app, I'd talk to the designer, who could hopefully supply me with `.svg` assets.
             - Another problem with using `.png`s here is that the dark-to-light mode color transitions won't apply to these images, so they'll flicker in place as the dark/light mode transition occurs. Doesn't look great, but I'm not going to worry about that now.
             - I'm going to use Tailwind's `@heroicons` package for some of the iconography that I can't easily extract from the design documents.
+                - **_Hang on a second!_** The iconography used in these design documents _is_ from Heroicons by TailwindCSS! OK - I'm going back now and replacing all of the `.png` icons I used with the SVGs from Heroicons. That's a big win! This also solves the above problem of the icons flickering.
     - ⭐ Cylera provided me with both a near-pixel-perfect design document _and_ textual descriptions of the various components contained within that document. Nice. As I'm developing, I'll be able to reference both documents to build each component to spec, making sure to note questions and assumptions about each component.
     - ❗I wish I had access to the full Figma document rather than just the prototype. If I had access to the document, I'd better be able to determine things like typefaces used, font sizes, exact colors, etc. I'll do my best.
         - Using [WhatTheFont](https://www.myfonts.com/WhatTheFont), I determined that the typeface used throughout the mockup is probably Proxima Nova - which isn't free. I'll use Metropolis, a free close alternative.
@@ -99,6 +100,8 @@ Here are my initial questions and assumptions I came up with while reading this 
     - I'm removing the right chevron from each summary card and making them not clickable or hoverable, since I'm not sure what the intended behavior is when the user clicks on one of those cards.
     - Changed "Total Payload Customers" label to "Unique Customers", under the assumption that this label is more accurate to the intent of the displayed dashboard data.
     - I came really close to showing an animated loading indicator on the cards while data was loading, but decided not to for times' sake. The temptation is present!
+        - Okay, the next day I came back and added a loading spinner. It's just too important.
+            - At the same time, I also updated TailwindCSS and its upstream dependencies to `tailwind@latest`.
     - To me, the most interesting summary cards display when the Launch Site filter is set to "Vandenberg Air Force Base Space Launch Complex 4E". If my filtering logic is correct... one mission, 8 payloads, average payload mass of 8,938 kg. Woah!
 5. Next: The "Payload Count by Nationality" component.
     - Thankfully, I'm going to be able to use a lot of what I learned from implementing the summary cards here.
@@ -110,6 +113,7 @@ Here are my initial questions and assumptions I came up with while reading this 
     - I created a utility function to return a stable hex color given a string. This lets me associate each unique nationality with a unique color.
     - The "Nationality" and "Payload Count" headers in the mockup are a different typeface from the rest. I'm not going to use a different typeface for my submission (not worth the extra time).
     - I'm using `react-tooltip` to make tooltip integration easier. Don't want to write my own library for that, either.
+    - The cursor targets for the pie chart as designed are too small for my liking, so that's something I'd like to talk to the designer about.
 
 
 -----

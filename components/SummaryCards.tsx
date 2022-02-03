@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/client';
+import { ArchiveIcon, ScaleIcon, UserCircleIcon } from '@heroicons/react/outline';
 import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
 import { launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
+import { LoadingSpinner } from './LoadingSpinner';
 
 const LAUNCH_SUMMARY_DATA = gql`
     query GetLaunchSummaryData($selectedLaunchpadID: String) {
@@ -25,12 +27,46 @@ const LAUNCH_SUMMARY_DATA = gql`
     }
 `;
 
-const SummaryCard = ({ imgSrc, data, label }: { imgSrc: string, data?: string | number | undefined, label: string }) => {
+enum SummaryCardType {
+    TotalPayloads = 0,
+    AvgPayloadMass = 1,
+    UniqueCustomers = 2,
+}
+
+const SummaryCardIcon = ({summaryCardType}: {summaryCardType: SummaryCardType}) => {
+    switch (summaryCardType) {
+        default:
+        case (SummaryCardType.TotalPayloads):
+            return (
+                <ArchiveIcon className='w-6 h-6 mt-0.5 text-dark-teal dark:text-teal transition-colors' />
+            )
+            break;
+        case (SummaryCardType.AvgPayloadMass):
+            return (
+                <ScaleIcon className='w-6 h-6 mt-0.5 text-purple dark:text-lilac transition-colors' />
+            )
+            break;
+        case (SummaryCardType.UniqueCustomers):
+            return (
+                <UserCircleIcon className='w-6 h-6 mt-0.5 text-burnt-orange dark:text-orange transition-colors' />
+            )
+            break;
+    }
+}
+
+const SummaryCard = ({ summaryCardType, data, label, loading }: { summaryCardType: SummaryCardType, data?: string | number | undefined, label: string, loading: Boolean }) => {
     return (
         <div className='flex align-top w-1/3 gap-2 bg-gray-dark dark:bg-dark-gray-dark transition-colors rounded-md p-3'>
-            <img src={imgSrc} className='w-6 h-6 mt-0.5' />
+            <SummaryCardIcon summaryCardType={summaryCardType} />
             <div className='flex flex-col'>
-                <p className='text-dark-purple dark:text-white transition-colors text-xl font-semibold'>{data}</p>
+                {
+                    loading ?
+                        <div className='h-7 w-7 flex items-center'>
+                            <LoadingSpinner className='h-3 w-3' />
+                        </div>
+                        :
+                        <p className='text-dark-purple dark:text-white transition-colors text-xl font-semibold'>{data}</p>
+                }
                 <p className='text-slate-blue dark:text-dark-gray-lighter-still transition-colors text-sm'>{label}</p>
             </div>
         </div>
@@ -125,9 +161,9 @@ export const SummaryCards = ({ selectedLaunchpad }: { selectedLaunchpad: launchp
 
     return (
         <div className='flex justify-center gap-4'>
-            <SummaryCard imgSrc='/icons/archive.png' data={(loading || error) ? '--' : totalPayloads} label='Total Payloads' />
-            <SummaryCard imgSrc='/icons/scale.png' data={`${avgPayloadMass && !loading && !error ? Math.round(avgPayloadMass) : "--"} kg`} label='Avg. Payload Mass' />
-            <SummaryCard imgSrc='/icons/user_circle.png' data={(loading || error) ? '--' : numUniquePayloadCustomers} label='Unique Customers' />
+            <SummaryCard summaryCardType={SummaryCardType.TotalPayloads} data={(loading || error) ? '--' : totalPayloads} label='Total Payloads' loading={loading} />
+            <SummaryCard summaryCardType={SummaryCardType.AvgPayloadMass} data={`${avgPayloadMass && !loading && !error ? Math.round(avgPayloadMass) : "--"} kg`} label='Avg. Payload Mass' loading={loading} />
+            <SummaryCard summaryCardType={SummaryCardType.UniqueCustomers} data={(loading || error) ? '--' : numUniquePayloadCustomers} label='Unique Customers' loading={loading} />
         </div>
     )
 }

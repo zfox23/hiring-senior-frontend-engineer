@@ -4,7 +4,9 @@ import { launchpad, launchpadAll, setPageTheme } from '../helpers/helperFunction
 import { usePopper } from 'react-popper';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
-import { CheckIcon } from '@heroicons/react/solid'
+import { CheckIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/solid'
+import { CogIcon, OfficeBuildingIcon } from '@heroicons/react/outline';
+import { LoadingSpinner } from './LoadingSpinner';
 
 const LAUNCH_SITES = gql`
     query GetLaunchSites {
@@ -30,7 +32,7 @@ const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: launchpad
     )
 }
 
-const LaunchSiteSelector = ({selectedLaunchpad, setSelectedLaunchpad}: {selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void}) => {
+const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void }) => {
     const { loading, error, data } = useQuery(LAUNCH_SITES);
 
     const popperElRef = React.useRef(null);
@@ -49,77 +51,73 @@ const LaunchSiteSelector = ({selectedLaunchpad, setSelectedLaunchpad}: {selected
         ]
     });
 
-    if (loading || error) {
-        return (
-            <div className={`inline-flex w-48 h-10 items-center justify-between rounded-md shadow-sm transition-colors bg-white hover:bg-gray-medium dark:bg-dark-gray-light dark:hover:bg-dark-gray-lighter`}>
-                <div className='flex items-center transition-colors'>
-                    <div className={`inline-flex items-center justify-center w-10 h-10 mr-1 transition-colors bg-office-building-blue dark:bg-office-building-white bg-no-repeat bg-center`} />
-                    <span className={`transition-colors text-sm font-medium text-blue dark:text-white`}>{launchpadAll.name}</span>
-                </div>
-                <div className={`w-10 h-10 mr-1 bg-chevron-down-blue dark:bg-chevron-down-white bg-no-repeat bg-center`} />
-            </div>
-        )
-    }
-
     return (
         <Listbox value={selectedLaunchpad} onChange={(item) => { setSelectedLaunchpad(item); }}>
             {({ open }) => (
                 <>
                     <div ref={setTargetElement}>
                         <Listbox.Button className={`inline-flex w-48 h-10 items-center justify-between rounded-md shadow-sm transition-colors ${open ? 'bg-blue' : 'bg-white hover:bg-gray-medium dark:bg-dark-gray-light dark:hover:bg-dark-gray-lighter'}`}>
-                            <div className='flex items-center transition-colors'>
-                                <div className={`inline-flex items-center justify-center w-10 h-10 transition-colors ${open ? 'bg-office-building-white' : 'bg-office-building-blue dark:bg-office-building-white'} bg-no-repeat bg-center`} />
-                                <span className={`w-28 text-left truncate transition-colors text-sm font-medium ${open ? 'text-white' : 'text-blue dark:text-white'}`}>{selectedLaunchpad.name}</span>
-                            </div>
-                            <div className={`w-10 h-10 mr-1 ${open ? 'bg-chevron-up-white dark:bg-chevron-up-white' : 'bg-chevron-down-blue dark:bg-chevron-down-white'} bg-no-repeat bg-center`} />
+                            <OfficeBuildingIcon className={`w-5 h-5 mx-4 transition-colors ${open ? 'text-white' : 'text-blue dark:text-white'}`} />
+                            <span className={`w-28 text-left truncate transition-colors text-sm font-medium ${open ? 'text-white' : 'text-blue dark:text-white'}`}>{selectedLaunchpad.name}</span>
+                            {
+                                open ?
+                                    <ChevronUpIcon className={`w-5 h-5 mx-2 transition-colors ${open ? 'text-white' : 'text-blue dark:text-white'}`} />
+                                    :
+                                    <ChevronDownIcon className={`w-5 h-5 mx-2 transition-colors ${open ? 'text-white' : 'text-blue dark:text-white'}`} />
+                            }
                         </Listbox.Button>
                     </div>
-                    <div
-                        ref={popperElRef}
-                        style={styles.popper}
-                        {...attributes.popper}>
-                        <Transition
-                            enter="transition duration-300 ease-out transform"
-                            enterFrom="-translate-y-2 opacity-0"
-                            enterTo="translate-y-0 opacity-100"
-                            leave="transition duration-100 ease-out transform"
-                            leaveFrom="translate-y-0 opacity-100"
-                            leaveTo="-translate-y-2 opacity-0"
-                            beforeEnter={() => setPopperElement(popperElRef.current)}
-                            afterLeave={() => setPopperElement(null)}
-                        >
-                            <Listbox.Options
-                                className="w-48 shadow-md rounded-md bg-white dark:bg-dark-gray-darker transition-colors">
-                                <Listbox.Option
-                                    key={launchpadAll.id}
-                                    value={launchpadAll}
-                                    as={Fragment}>
-                                    {({ active, selected }) => (
-                                        <LaunchPadOption launchpad={launchpadAll} active={active} selected={selected} />
-                                    )}
-                                </Listbox.Option>
-                                {
-                                    data.launchpads.map((launchpad: launchpad) => (
+                    {
+                        loading || error ?
+                            null
+                            :
+                            <div
+                                ref={popperElRef}
+                                style={styles.popper}
+                                {...attributes.popper}>
+                                <Transition
+                                    enter="transition duration-300 ease-out transform"
+                                    enterFrom="-translate-y-2 opacity-0"
+                                    enterTo="translate-y-0 opacity-100"
+                                    leave="transition duration-100 ease-out transform"
+                                    leaveFrom="translate-y-0 opacity-100"
+                                    leaveTo="-translate-y-2 opacity-0"
+                                    beforeEnter={() => setPopperElement(popperElRef.current)}
+                                    afterLeave={() => setPopperElement(null)}
+                                >
+                                    <Listbox.Options
+                                        className="w-48 shadow-md rounded-md bg-white dark:bg-dark-gray-darker transition-colors">
                                         <Listbox.Option
-                                            key={launchpad.id}
-                                            value={launchpad}
+                                            key={launchpadAll.id}
+                                            value={launchpadAll}
                                             as={Fragment}>
                                             {({ active, selected }) => (
-                                                <LaunchPadOption launchpad={launchpad} active={active} selected={selected} />
+                                                <LaunchPadOption launchpad={launchpadAll} active={active} selected={selected} />
                                             )}
                                         </Listbox.Option>
-                                    ))
-                                }
-                            </Listbox.Options>
-                        </Transition>
-                    </div>
+                                        {
+                                            data.launchpads.map((launchpad: launchpad) => (
+                                                <Listbox.Option
+                                                    key={launchpad.id}
+                                                    value={launchpad}
+                                                    as={Fragment}>
+                                                    {({ active, selected }) => (
+                                                        <LaunchPadOption launchpad={launchpad} active={active} selected={selected} />
+                                                    )}
+                                                </Listbox.Option>
+                                            ))
+                                        }
+                                    </Listbox.Options>
+                                </Transition>
+                            </div>
+                    }
                 </>
             )}
         </Listbox>
     )
 }
 
-export const Header = ({selectedLaunchpad, setSelectedLaunchpad}: {selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void}) => {
+export const Header = ({ selectedLaunchpad, setSelectedLaunchpad }: { selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void }) => {
     const [darkModeEnabled, setDarkModeEnabled] = useState(typeof window !== 'undefined' && localStorage.theme === 'dark');
     const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);;
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);;
@@ -143,7 +141,8 @@ export const Header = ({selectedLaunchpad, setSelectedLaunchpad}: {selectedLaunc
                 <Popover className="relative">
                     {({ open }) => (
                         <>
-                            <Popover.Button ref={setReferenceElement} className={`inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full shadow-sm transition-colors ${open ? 'bg-cog-white bg-blue' : 'bg-cog-blue bg-white hover:bg-gray-medium dark:bg-cog-white dark:bg-dark-gray-light dark:hover:bg-dark-gray-lighter'} bg-no-repeat bg-center`}>
+                            <Popover.Button ref={setReferenceElement} className={`inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full shadow-sm transition-colors ${open ? 'bg-blue' : 'bg-white hover:bg-gray-medium dark:bg-dark-gray-light dark:hover:bg-dark-gray-lighter'} bg-no-repeat bg-center`}>
+                                <CogIcon className={`w-5 h-5 transition-colors ${open ? "text-white" : "text-blue dark:text-white"}`} />
                             </Popover.Button>
                             <Transition
                                 className="absolute z-10"

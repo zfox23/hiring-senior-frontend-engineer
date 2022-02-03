@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { colorFromString, launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
 import ReactTooltip from 'react-tooltip';
-import resolveConfig from 'tailwindcss/resolveConfig';
-import tailwindConfig from '../tailwind.config.js';
+import NoSsr from './NoSSR';
+import { LoadingSpinner } from './LoadingSpinner';
+import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 const PAYLOAD_COUNT_BY_NATIONALITY_DATA = gql`
     query GetPayloadCountByNationalityData($selectedLaunchpadID: String) {
@@ -27,6 +28,28 @@ const PAYLOAD_COUNT_BY_NATIONALITY_DATA = gql`
         }
     }
 `;
+
+const NationalityHeader = ({ isDarkTheme }: { isDarkTheme: Boolean }) => {
+    return (
+        <div className='flex items-center border-b-4 border-gray-light dark:border-dark-gray-medium'>
+            <h2 className='text-dark-purple dark:text-white transition-colors text-xl font-semibold p-3'>Payload Count by Nationality</h2>
+            <QuestionMarkCircleIcon data-tip="" data-for='countHelp' className='w-5 h-5 text-dark-purple dark:text-white transition-colors' />
+            <NoSsr>
+                <ReactTooltip
+                    id="countHelp"
+                    type='error'
+                    // fullConfig.theme.colors['dark-purple']
+                    textColor={`${isDarkTheme ? "#1C1F37" : "#FFFFFF"}`}
+                    // fullConfig.theme.colors['dark-blue']
+                    backgroundColor={`${isDarkTheme ? "#FFFFFF" : "#111827"}`}
+                    // fullConfig.theme.colors['dark-gray-light']
+                    arrowColor={`${isDarkTheme ? "#FFFFFF" : "#3B3B3C"}`}>
+                    Pie chart shows all nationalities. Data table only shows top 5.
+                </ReactTooltip>
+            </NoSsr>
+        </div>
+    )
+}
 
 interface pieChartData {
     title: string;
@@ -120,56 +143,57 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
     const makeTooltipContent = (hoveredData: pieChartData) => {
         return (
             <div className='flex items-center p-1'>
-                <span className={`rounded-full w-3 h-3 mr-3 mb-0.5`} style={{"backgroundColor": hoveredData.color}} />
+                <span className={`rounded-full w-3 h-3 mr-3 mb-0.5`} style={{ "backgroundColor": hoveredData.color }} />
                 <p className='text-sm text-white dark:text-slate-blue'>{hoveredData.title}</p>
                 <p className='font-bold text-sm dark:text-dark-blue ml-3'>{hoveredData.value}</p>
-            </div>    
+            </div>
         );
     }
 
-    const fullConfig = resolveConfig(tailwindConfig);
+    const isDarkTheme = typeof window !== 'undefined' && localStorage.theme === "dark";
 
     return (
         <div className='flex flex-col w-1/2 bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
-            <div className='flex items-center'>
-                <h2 className='text-dark-purple dark:text-white transition-colors text-xl font-semibold p-3 border-b-4 border-gray-light dark:border-dark-gray-medium'>Payload Count by Nationality</h2>
-                <div data-tip="" data-for='countHelp' className='bg-cog-blue dark:bg-cog-white bg-no-repeat bg-center w-10 h-10' />
-                <ReactTooltip
-                    id="countHelp"
-                    type='error'
-                    textColor={`${localStorage.theme === "dark" ? fullConfig.theme.colors['dark-purple'] : fullConfig.theme.colors['white']}`}
-                    backgroundColor={`${localStorage.theme === "dark" ? fullConfig.theme.colors['white'] : fullConfig.theme.colors['dark-blue']}`}
-                    arrowColor={`${localStorage.theme === "dark" ? fullConfig.theme.colors['white'] : fullConfig.theme.colors['dark-gray-light']}`}>
-                        <span>Pie chart shows all nationalities; Data table shows top 5</span>
-                </ReactTooltip>
-            </div>
+            <NationalityHeader isDarkTheme={isDarkTheme} />
             <div className='flex justify-center items-center p-8 gap-4'>
-                <div className='w-1/3' data-tip="" data-for="chart">
-                    <PieChart
-                        data={pieChartData}
-                        lineWidth={15}
-                        paddingAngle={15}
-                        rounded
-                        onMouseOver={(_, index) => {
-                            setHovered(index);
-                        }}
-                        onMouseOut={() => {
-                            setHovered(null);
-                        }}
-                        />
-                    <ReactTooltip
-                        id="chart"
-                        textColor={`${localStorage.theme === "dark" ? fullConfig.theme.colors['dark-purple'] : fullConfig.theme.colors['white']}`}
-                        backgroundColor={`${localStorage.theme === "dark" ? fullConfig.theme.colors['white'] : fullConfig.theme.colors['dark-blue']}`}
-                        arrowColor={`${localStorage.theme === "dark" ? fullConfig.theme.colors['white'] : fullConfig.theme.colors['dark-gray-light']}`}
-                        getContent={() => {
-                            return typeof hovered === 'number' && pieChartData ? makeTooltipContent(pieChartData[hovered]) : null
-                        }}
-                    />
-                </div>
-                <div className='w-2/3'>
+                {
+                    loading ?
+                        <LoadingSpinner className='h-7 w-7' />
+                        :
+                        <div>
+                            <div className='w-1/3' data-tip="" data-for="chart">
+                                <PieChart
+                                    data={pieChartData}
+                                    lineWidth={15}
+                                    paddingAngle={15}
+                                    rounded
+                                    onMouseOver={(_, index) => {
+                                        setHovered(index);
+                                    }}
+                                    onMouseOut={() => {
+                                        setHovered(null);
+                                    }}
+                                />
+                                <NoSsr>
+                                    <ReactTooltip
+                                        id="chart"
+                                        // fullConfig.theme.colors['dark-purple']
+                                        textColor={`${isDarkTheme ? "#1C1F37" : "#FFFFFF"}`}
+                                        // fullConfig.theme.colors['dark-blue']
+                                        backgroundColor={`${isDarkTheme ? "#FFFFFF" : "#111827"}`}
+                                        // fullConfig.theme.colors['dark-gray-light']
+                                        arrowColor={`${isDarkTheme ? "#FFFFFF" : "#3B3B3C"}`}
+                                        getContent={() => {
+                                            return typeof hovered === 'number' && pieChartData ? makeTooltipContent(pieChartData[hovered]) : null
+                                        }}
+                                    />
+                                </NoSsr>
+                            </div>
+                            <div className='w-2/3'>
 
-                </div>
+                            </div>
+                        </div>
+                }
             </div>
         </div>
     )

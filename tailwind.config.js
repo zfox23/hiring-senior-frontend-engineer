@@ -1,19 +1,9 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
-    backgroundImage: {
-      'cog-white': "url('/icons/cog-white.png')",
-      'cog-blue': "url('/icons/cog-blue.png')",
-      'office-building-white': "url('/icons/office-building-white.png')",
-      'office-building-blue': "url('/icons/office-building-blue.png')",
-      'chevron-down-white': "url('/icons/chevron-down-white.png')",
-      'chevron-down-blue': "url('/icons/chevron-down-blue.png')",
-      'chevron-up-white': "url('/icons/chevron-up-white.png')",
-      'chevron-up-blue': "url('/icons/chevron-up-blue.png')",
-    },
     extend: {
       colors: {
         'black': "#000000",
@@ -30,8 +20,13 @@ module.exports = {
         'dark-blue': '#111827',
         'blue': "#0981C3",
         'slate-blue': "#6B7280",
-        'dark-blue': "#111827",
         'dark-purple': "#1C1F37",
+        'teal': "#2DD4BF",
+        'dark-teal': "#0D9488",
+        'lilac': "#818CF8",
+        'purple': "#4F46E5",
+        'orange': "#F59E0B",
+        'burnt-orange': "#B45309",
       },
       fontFamily: {
         'sans': ['Metropolis', ...defaultTheme.fontFamily.sans]
