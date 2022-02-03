@@ -1,13 +1,13 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
 import { LoadingSpinner } from './LoadingSpinner';
-import { ArrowsExpandIcon } from '@heroicons/react/outline';
+import { ArrowsExpandIcon, SearchIcon } from '@heroicons/react/outline';
 
 const LAUNCH_DATA = gql`
-    query GetLaunchData($selectedLaunchpadID: String) {
-        launches(find: {site_id: $selectedLaunchpadID}) {
+    query GetLaunchData($selectedLaunchpadID: String, $searchedMissionName: String) {
+        launches(find: {site_id: $selectedLaunchpadID, mission_name: $searchedMissionName}) {
             launch_site {
                 site_id
                 site_name
@@ -28,11 +28,14 @@ const LAUNCH_DATA = gql`
 }
 `;
 
-const LaunchDataHeader = () => {
+const LaunchDataHeader = ({toggleFullscreenLaunchData}: {toggleFullscreenLaunchData: () => void}) => {
     return (
         <div className='flex items-center justify-between border-b-4 p-3 transition-colors border-gray-light dark:border-dark-gray-medium'>
             <h2 className='text-dark-purple dark:text-white transition-colors text-xl font-semibold'>SpaceX Launch Data</h2>
-            <ArrowsExpandIcon className='w-5 h-5 ml-2 mb-0.5 text-blue dark:text-white transition-colors' />
+            <button
+                onClick={toggleFullscreenLaunchData}>
+                <ArrowsExpandIcon className='w-5 h-5 ml-2 mb-0.5 text-blue dark:text-white transition-colors' />
+            </button>
         </div>
     )
 }
@@ -47,11 +50,15 @@ interface launchData {
     missionId: string;
 }
 
-export const LaunchDataCard = ({ selectedLaunchpad }: { selectedLaunchpad: launchpad }) => {
+export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggleFullscreenLaunchData }: { selectedLaunchpad: launchpad, fullscreenLaunchData: Boolean, toggleFullscreenLaunchData: () => void }) => {
     const [launchData, setLaunchData] = useState<launchData[]>();
+    const [searchedMissionName, setSearchedMissionName] = useState<string>();
 
     const { loading, error, data } = useQuery(LAUNCH_DATA, {
-        variables: { selectedLaunchpadID: selectedLaunchpad.id === "custom_all" ? null : selectedLaunchpad.id },
+        variables: {
+            selectedLaunchpadID: selectedLaunchpad.id === "custom_all" ? null : selectedLaunchpad.id,
+            searchedMissionName
+        },
     });
 
     useEffect(() => {
@@ -75,8 +82,6 @@ export const LaunchDataCard = ({ selectedLaunchpad }: { selectedLaunchpad: launc
                 return;
             }
 
-            console.log(launchData.rocket?.rocket.payload_weights.reduce((sum, a) => sum + a, 0))
-
             tempLaunchData.push({
                 name: launchData.mission_name,
                 timestampUnix: launchData.launch_date_unix,
@@ -93,8 +98,22 @@ export const LaunchDataCard = ({ selectedLaunchpad }: { selectedLaunchpad: launc
     }, [data]);
 
     return (
-        <div className='flex flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
-            <LaunchDataHeader />
+        <div className={`flex ${fullscreenLaunchData ? 'h-0' : ''} flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md grow`}>
+            <LaunchDataHeader toggleFullscreenLaunchData={toggleFullscreenLaunchData} />
+            <form onSubmit={(e: any) => {
+                e.preventDefault();
+                const userInput = e.target[1].value;
+                setSearchedMissionName(userInput);
+            }}>
+                <div className="px-6 py-4 box-border relative transition-colors text-slate-blue-70 focus-within:text-slate-blue dark:text-white-70 dark:focus-within:text-white rounded-md w-full">
+                    <span className="absolute inset-y-0 left-6 flex items-center pl-2">
+                        <button type="submit" className='w-4 h-4'>
+                            <SearchIcon />
+                        </button>
+                    </span>
+                    <input type="search" className="w-full box-border py-2 text-sm transition-colors bg-gray-medium text-slate-blue-70 focus:text-slate-blue dark:bg-dark-gray-medium dark:text-white-70 dark:focus:text-white rounded-md pl-8 focus:outline-none" placeholder="Search by Mission Name" autoComplete="off" />
+                </div>
+            </form>
             {
                 loading ?
                     <div className='flex justify-center items-center p-12'>
@@ -102,7 +121,7 @@ export const LaunchDataCard = ({ selectedLaunchpad }: { selectedLaunchpad: launc
                     </div>
                     :
                     launchData && launchData?.length > 0 ?
-                        <div className='flex justify-center items-center'>
+                        <div className='flex flex-col justify-start items-center shrink overflow-y-auto'>
                             <table className="table-auto w-full">
                                 <thead className='text-sm transition-colors text-slate-blue dark:text-white text-left'>
                                     <tr>
@@ -120,7 +139,7 @@ export const LaunchDataCard = ({ selectedLaunchpad }: { selectedLaunchpad: launc
                                         launchData.map((data: launchData, idx, array) => (
                                             <tr key={data.timestampUnix} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
                                                 <td className='py-1.5 pr-2 pl-4'>{data.name}</td>
-                                                <td className='py-2 pr-2'>{new Date(data.timestampUnix * 1000).toLocaleString('en-US', {timeZoneName: "short"})}</td>
+                                                <td className='py-2 pr-2'>{new Date(data.timestampUnix * 1000).toLocaleString('en-US', { timeZoneName: "short" })}</td>
                                                 <td className={`py-1.5 pr-2 font-medium transition-colors ${data.success ? "text-teal dark:text-light-teal" : "text-red dark:text-red"}`}>{data.success ? "Success" : "Failure"}</td>
                                                 <td className='py-1.5 pr-2'>{data.rocketName}</td>
                                                 <td className='py-1.5 pr-2'>{data.payloadMassKG} kg</td>
@@ -134,7 +153,7 @@ export const LaunchDataCard = ({ selectedLaunchpad }: { selectedLaunchpad: launc
                         </div>
                         :
                         <p className='text-dark-purple dark:text-white transition-colors text-l font-medium p-4 text-center'>
-                            SpaceX has not launched any payloads at this site.
+                            {searchedMissionName ? "Your search yielded 0 results." : "SpaceX has not launched any payloads at this site."}
                         </p>
             }
         </div>

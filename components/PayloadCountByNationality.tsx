@@ -195,7 +195,7 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
                                     <thead className='text-sm transition-colors text-slate-blue dark:text-white text-left'>
                                         <tr>
                                             <th className='font-light'>NATIONALITY</th>
-                                            <th className='font-light'>PAYLOAD COUNT</th>
+                                            <th className='font-light'>PAYLOADS</th>
                                         </tr>
                                     </thead>
                                     <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>

@@ -8,6 +8,7 @@ module.exports = {
       colors: {
         'black': "#000000",
         'white': '#FFFFFF',
+        'white-70': 'rgba(255, 255, 255, 0.7)',
         'gray-light': '#F9FAFB',
         'gray-medium': '#F3F4F6',
         'gray-dark': '#E5E7EB',
@@ -22,6 +23,7 @@ module.exports = {
         'dark-blue': '#111827',
         'blue': "#0981C3",
         'slate-blue': "#6B7280",
+        'slate-blue-70': "rgb(107, 114, 128, 0.7)",
         'dark-purple': "#1C1F37",
         'light-teal': "#5eead4",
         'teal': "#2DD4BF",

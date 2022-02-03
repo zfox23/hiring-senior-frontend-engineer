@@ -163,13 +163,13 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
                                     {
                                         topFiveMissionsData.map((data: topFiveMissionsData, idx, array) => (
                                             <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
-                                                <td className='py-1.5 pr-2 font-medium'>
+                                                <td className='py-1.5 pr-2 font-medium max-w-[160px]'>
                                                     <span>{data.title}</span>
                                                 </td>
                                                 <td className=''>
                                                     <div className='flex items-center justify-between gap-4'>
                                                         <span>{Math.round(data.massKg)} kg</span>
-                                                        <div className='w-48 h-1.5 flex gap-0.5'>
+                                                        <div className='w-28 h-1.5 flex gap-0.5'>
                                                             <div className='h-1.5 rounded-full transition-colors bg-black dark:bg-gray-darker' style={{ "width": `${100 * data.massKg / topFiveMissionsData.reduce((currentMax, a) => Math.max(currentMax, a.massKg), 0)}%` }} />
                                                             <div className='h-1.5 rounded-full transition-colors bg-gray-medium dark:bg-dark-gray-lightish grow' />
                                                         </div>

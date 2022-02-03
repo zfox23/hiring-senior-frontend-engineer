@@ -129,6 +129,8 @@ Here are my initial questions and assumptions I came up with while reading this 
     - I'm going to start off by doing client-side sorting and filtering and without pagination, then I'll migrate to server-side filtering with pagination. This way, it'll be easiest for me to develop the component UI _first_, then I can take care of the rest of the component requirements.
     - Wow - building this component requires the simplest GraphQL query so far! I can get all of the data I need by querying `launches`. Thank goodness - parsing the returned data and modifying it to fit my needs was one of the biggest pains when developing the previous components.
     - I'm formatting the dates in the table as dates/times relative to the user's time settings, as I think that is most readable and makes the most sense in this context.
+    - I noticed that I was spending too long on the table fullscreen animation, so I stopped working on it. There are several improvements I could make to it, but making accordion-like animations with containers of variable height is a challenge, and I'd need to spend more time than I want to right now on getting that perfect. It's _fine_ now.
+    - I spent a _long_ time on the "fullscreen table" UI. The current implementation is _fine_ - same as the fullscreen table animation, as noted above - but it relies on some CSS tricks I don't fully understand. (I think that's how CSS works for most people, right?) For example, in order to get the `<table>` to properly constrain to a parent, I had to set one of the parent container's heights to `0`. Why? I don't know. I'm not going to touch it, and I'm going to move on for now. It's fine. It's something I'd want to better understand if this were production code.
 
 
 -----
