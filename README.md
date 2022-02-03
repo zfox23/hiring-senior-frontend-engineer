@@ -118,13 +118,17 @@ Here are my initial questions and assumptions I came up with while reading this 
 6. Onto the "Top 5 Missions" component.
     - Same as the last component - I'm going to be able to use much of what I learned from implementing the previous component here.
     - I'm finding myself having to come up with untenable names for colors because there are so many different colors in this design. I would talk to the designer about the color palette used in the app to minimize the number of colors used, or come up with better names for the colors.
-    - I chose to align the items in the flex container holding the "payload count" and "top 5 missions" components to `items-start`. This can create some space below the shorter card between the two, if one is shorter than the other. I believe this design to be preferable to the card itself growing taller.
+    - I chose to align the items in the flex container holding the "payload count" and "top 5 missions" components to `items-stretch`. This can create some space inside the shorter card between the two, if one is shorter than the other. I believe this design to be preferable to there being extra whitepace below the shorter card.
     - I am quite proud of this data table. 😀
     - Regarding the black scale bars, to reiterate a design assumption from above:
         - 0% === "0kg", 100% === "max payload mass for the top 5 missions shown"
             - This means that the top mission will always show a full "black bar."
         - I know for sure that this wasn't the designer's intention - else the top bar in the mock's data table would be full - so I'd want to talk to the designer about this. However, I think my design does a good job of showing relative payload masses for those top five displayed missions.
     - That was the fastest component I've built so far! I couldn't have done this so quickly without the proper architecture I developed in the previous components.
+7. Finally, the data table component!
+    - I'm going to start off by doing client-side sorting and filtering and without pagination, then I'll migrate to server-side filtering with pagination. This way, it'll be easiest for me to develop the component UI _first_, then I can take care of the rest of the component requirements.
+    - Wow - building this component requires the simplest GraphQL query so far! I can get all of the data I need by querying `launches`. Thank goodness - parsing the returned data and modifying it to fit my needs was one of the biggest pains when developing the previous components.
+    - I'm formatting the dates in the table as dates/times relative to the user's time settings, as I think that is most readable and makes the most sense in this context.
 
 
 -----

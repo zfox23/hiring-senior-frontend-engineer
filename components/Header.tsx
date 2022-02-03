@@ -24,7 +24,7 @@ const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: launchpad
             value={launchpad}
             as={Fragment}>
             {({ active, selected }) => (
-                <li className={`rounded-md flex items-center justify-start gap-2 p-2 cursor-pointer ${active || selected ? 'bg-blue text-white dark:text-white' : ' text-black dark:text-white'}`}>
+                <li className={`rounded-md flex items-center justify-start gap-2 p-2 cursor-pointer transition-colors ${active || selected ? 'bg-blue text-white dark:text-white' : ' text-black dark:text-white'}`}>
                     {selected && <span className='flex items-center'><CheckIcon className="w-5 h-5" /></span>}
                     <span className={`text-sm ${selected ? 'font-semibold' : 'font-medium'}`}>{launchpad.name}</span>
                 </li>)}

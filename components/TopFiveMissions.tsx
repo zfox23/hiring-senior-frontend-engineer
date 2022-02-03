@@ -161,32 +161,30 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
                                 </thead>
                                 <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
                                     {
-                                        topFiveMissionsData ?
-                                            topFiveMissionsData.map((data: topFiveMissionsData, idx, array) => (
-                                                <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
-                                                    <td className='py-1.5 pr-2 font-medium'>
-                                                        <span>{data.title}</span>
-                                                    </td>
-                                                    <td className=''>
-                                                        <div className='flex items-center justify-between gap-4'>
-                                                            <span>{Math.round(data.massKg)} kg</span>
-                                                            <div className='w-48 h-1.5 flex gap-0.5'>
-                                                                <div className='h-1.5 rounded-full bg-black dark:bg-gray-darker' style={{"width": `${100 * data.massKg / topFiveMissionsData.reduce((currentMax, a) => Math.max(currentMax, a.massKg), 0)}%`}} />
-                                                                <div className='h-1.5 rounded-full bg-gray-medium dark:bg-dark-gray-lightish grow' />
-                                                            </div>
+                                        topFiveMissionsData.map((data: topFiveMissionsData, idx, array) => (
+                                            <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
+                                                <td className='py-1.5 pr-2 font-medium'>
+                                                    <span>{data.title}</span>
+                                                </td>
+                                                <td className=''>
+                                                    <div className='flex items-center justify-between gap-4'>
+                                                        <span>{Math.round(data.massKg)} kg</span>
+                                                        <div className='w-48 h-1.5 flex gap-0.5'>
+                                                            <div className='h-1.5 rounded-full transition-colors bg-black dark:bg-gray-darker' style={{ "width": `${100 * data.massKg / topFiveMissionsData.reduce((currentMax, a) => Math.max(currentMax, a.massKg), 0)}%` }} />
+                                                            <div className='h-1.5 rounded-full transition-colors bg-gray-medium dark:bg-dark-gray-lightish grow' />
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                            : null
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
                                     }
                                 </tbody>
                             </table>
                         </div>
-                    :
-                    <p className='text-dark-purple dark:text-white transition-colors text-l font-medium p-4 text-center'>
-                        SpaceX has not launched any payloads at this site.
-                    </p>
+                        :
+                        <p className='text-dark-purple dark:text-white transition-colors text-l font-medium p-4 text-center'>
+                            SpaceX has not launched any payloads at this site.
+                        </p>
             }
         </div>
     )

@@ -14,10 +14,22 @@ export const launchpadAll = { "id": "custom_all", "name": "All Launch Sites" };
 
 export interface launchSite {
     site_id: string;
+    site_name?: string;
+}
+export interface rocketPayloadData {
+    payload_weights: [kg: number];
+}
+export interface rocketData {
+    rocket_name: string;
+    rocket: rocketPayloadData;
 }
 export interface launchesData {
     launch_site: launchSite;
     mission_id: [string];
+    launch_date_unix?: number;
+    launch_success?: Boolean;
+    mission_name?: string;
+    rocket?: rocketData;
 }
 export interface payloadsData {
     id: string;

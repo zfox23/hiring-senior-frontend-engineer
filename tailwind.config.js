@@ -23,12 +23,14 @@ module.exports = {
         'blue': "#0981C3",
         'slate-blue': "#6B7280",
         'dark-purple': "#1C1F37",
+        'light-teal': "#5eead4",
         'teal': "#2DD4BF",
         'dark-teal': "#0D9488",
         'lilac': "#818CF8",
         'purple': "#4F46E5",
         'orange': "#F59E0B",
         'burnt-orange': "#B45309",
+        'red': '#F33F5E',
       },
       fontFamily: {
         'sans': ['Metropolis', ...defaultTheme.fontFamily.sans]

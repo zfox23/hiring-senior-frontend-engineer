@@ -143,8 +143,8 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
         return (
             <div className='flex items-center p-1'>
                 <span className={`rounded-full w-3 h-3 mr-3 mb-0.5`} style={{ "backgroundColor": hoveredData.color }} />
-                <p className='text-sm text-white dark:text-slate-blue'>{hoveredData.title}</p>
-                <p className='font-bold text-sm dark:text-dark-blue ml-3'>{hoveredData.value}</p>
+                <p className='text-sm transition-colors text-white dark:text-slate-blue'>{hoveredData.title}</p>
+                <p className='font-bold transition-colors text-sm dark:text-dark-blue ml-3'>{hoveredData.value}</p>
             </div>
         );
     }
@@ -200,16 +200,14 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
                                     </thead>
                                     <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
                                         {
-                                            pieChartData ?
-                                                pieChartData.map((data: pieChartData, idx, array) => (
-                                                    <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
-                                                        <td className='flex items-center py-1.5 mr-4'>
-                                                            <span className={`rounded-full w-2 h-2 mr-1 mb-0.5`} style={{ "backgroundColor": data.color }} />
-                                                            <span>{data.title}</span></td>
-                                                        <td>{data.value}</td>
-                                                    </tr>
-                                                ))
-                                                : null
+                                            pieChartData.map((data: pieChartData, idx, array) => (
+                                                <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
+                                                    <td className='flex items-center py-1.5 mr-4'>
+                                                        <span className={`rounded-full w-2 h-2 mr-1 mb-0.5`} style={{ "backgroundColor": data.color }} />
+                                                        <span>{data.title}</span></td>
+                                                    <td>{data.value}</td>
+                                                </tr>
+                                            ))
                                         }
                                     </tbody>
                                 </table>

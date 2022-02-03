@@ -14,13 +14,12 @@ import useBodyClass from '../hooks/useBodyClass';
 import {
     ApolloClient,
     InMemoryCache,
-    ApolloProvider,
-    useQuery,
-    gql
+    ApolloProvider
 } from "@apollo/client";
 import { SummaryCards } from '../components/SummaryCards';
 import { PayloadCountByNationalityCard } from '../components/PayloadCountByNationality';
 import { TopFiveMissionsCard } from '../components/TopFiveMissions';
+import { LaunchDataCard } from '../components/LaunchDataTable';
 
 const client = new ApolloClient({
     uri: 'https://api.spacex.land/graphql/',
@@ -52,10 +51,11 @@ const Home: NextPage = () => {
                 <Header selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
                 <main className='flex flex-col gap-4'>
                     <SummaryCards selectedLaunchpad={selectedLaunchpad} />
-                    <div className='flex flex-wrap gap-4 justify-center items-start'>
+                    <div className='flex flex-wrap gap-4 justify-center items-stretch'>
                         <PayloadCountByNationalityCard selectedLaunchpad={selectedLaunchpad} />
                         <TopFiveMissionsCard selectedLaunchpad={selectedLaunchpad} />
                     </div>
+                    <LaunchDataCard selectedLaunchpad={selectedLaunchpad} />
                 </main>
             </div>
         </ApolloProvider>
