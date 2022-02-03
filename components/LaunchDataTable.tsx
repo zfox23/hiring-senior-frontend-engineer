@@ -4,6 +4,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ArrowsExpandIcon, SearchIcon } from '@heroicons/react/outline';
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid';
 
 const LAUNCH_DATA = gql`
     query GetLaunchData($selectedLaunchpadID: String, $searchedMissionName: String) {
@@ -28,7 +29,7 @@ const LAUNCH_DATA = gql`
 }
 `;
 
-const LaunchDataHeader = ({toggleFullscreenLaunchData}: {toggleFullscreenLaunchData: () => void}) => {
+const LaunchDataHeader = ({ toggleFullscreenLaunchData }: { toggleFullscreenLaunchData: () => void }) => {
     return (
         <div className='flex items-center justify-between border-b-4 p-3 transition-colors border-gray-light dark:border-dark-gray-medium'>
             <h2 className='text-dark-purple dark:text-white transition-colors text-xl font-semibold'>SpaceX Launch Data</h2>
@@ -41,18 +42,45 @@ const LaunchDataHeader = ({toggleFullscreenLaunchData}: {toggleFullscreenLaunchD
 }
 
 interface launchData {
-    name: string;
-    timestampUnix: number;
-    success: Boolean;
-    rocketName: string;
-    payloadMassKG: number;
-    siteName: string;
-    missionId: string;
+    mission_name: string;
+    launch_date_unix: number;
+    launch_success: Boolean;
+    rocket_name: string;
+    kg: number;
+    site_name: string;
+    mission_id: string;
+}
+
+const LaunchDataTableHeader = ({ title, sortColumnName, handleColumnClick, currentTableSortColumn, sortDescending }: { title: string, sortColumnName: string, handleColumnClick: (arg0: string) => void, currentTableSortColumn: string, sortDescending: Boolean }) => {
+    return (
+        <div className='flex justify-start items-center gap-2 cursor-pointer' onClick={() => { handleColumnClick(sortColumnName) }}>
+            <span>{title}</span>
+            {currentTableSortColumn === sortColumnName ?
+                sortDescending ?
+                    <ArrowDownIcon className="w-4 h-4" /> :
+                    <ArrowUpIcon className="w-4 h-4" /> :
+                null}
+        </div>
+    )
 }
 
 export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggleFullscreenLaunchData }: { selectedLaunchpad: launchpad, fullscreenLaunchData: Boolean, toggleFullscreenLaunchData: () => void }) => {
     const [launchData, setLaunchData] = useState<launchData[]>();
     const [searchedMissionName, setSearchedMissionName] = useState<string>();
+
+    const [limit, setLimit] = useState(10);
+    const [offset, setOffset] = useState(0);
+    const [sortColumn, setSortColumn] = useState("launch_date_unix");
+    const [sortDescending, setSortDescending] = useState(true);
+
+    const handleColumnClick = (newSortColumn: string) => {
+        if (newSortColumn === sortColumn) {
+            setSortDescending(!sortDescending);
+        } else {
+            setSortDescending(true);
+            setSortColumn(newSortColumn);
+        }
+    }
 
     const { loading, error, data } = useQuery(LAUNCH_DATA, {
         variables: {
@@ -83,19 +111,42 @@ export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggle
             }
 
             tempLaunchData.push({
-                name: launchData.mission_name,
-                timestampUnix: launchData.launch_date_unix,
-                success: launchData.launch_success,
-                rocketName: launchData.rocket?.rocket_name,
-                payloadMassKG: launchData.rocket?.rocket.payload_weights.reduce((sum, a: any) => sum + a.kg, 0),
-                siteName: launchData.launch_site.site_name,
+                mission_name: launchData.mission_name,
+                launch_date_unix: launchData.launch_date_unix,
+                launch_success: launchData.launch_success,
+                rocket_name: launchData.rocket?.rocket_name,
+                kg: launchData.rocket?.rocket.payload_weights.reduce((sum, a: any) => sum + a.kg, 0),
+                site_name: launchData.launch_site.site_name,
                 // Assume the first `mission_id` is the one we should use for display.
-                missionId: launchData.mission_id[0]
+                mission_id: launchData.mission_id[0]
             });
         });
 
-        setLaunchData(tempLaunchData);
-    }, [data]);
+        console.log(tempLaunchData)
+
+        let sortedData = tempLaunchData.sort((a: any, b: any) => {
+            let initialDataA = a[sortColumn];
+            let initialDataB = b[sortColumn];
+
+            if (typeof initialDataA === "string") {
+                if (initialDataA < initialDataB) {
+                    return sortDescending ? -1 : 1;
+                }
+                if (initialDataA > initialDataB) {
+                    return sortDescending ? 1 : -1;
+                }
+                return 0;
+            } else {
+                if (sortDescending) {
+                    return (initialDataB - initialDataA);
+                } else {
+                    return (initialDataA - initialDataB);
+                }
+            }
+        });
+
+        setLaunchData(sortedData);
+    }, [data, sortColumn, sortDescending]);
 
     return (
         <div className={`flex ${fullscreenLaunchData ? 'h-0' : ''} flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md grow`}>
@@ -125,26 +176,40 @@ export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggle
                             <table className="table-auto w-full">
                                 <thead className='text-sm transition-colors text-slate-blue dark:text-white text-left'>
                                     <tr>
-                                        <th className='font-medium pl-4 pr-2 py-2'>Mission Name</th>
-                                        <th className='font-medium pr-2 py-2'>Date</th>
-                                        <th className='font-medium pr-2 py-2'>Outcome</th>
-                                        <th className='font-medium pr-2 py-2'>Rocket</th>
-                                        <th className='font-medium pr-2 py-2'>Payload Mass</th>
-                                        <th className='font-medium pr-2 py-2'>Site</th>
-                                        <th className='font-medium pr-4 py-2'>Mission ID</th>
+                                        <th className='font-medium pl-4 pr-2 py-2'>
+                                            <LaunchDataTableHeader title='Mission Name' sortColumnName='mission_name' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
+                                        <th className='font-medium pr-2 py-2'>
+                                            <LaunchDataTableHeader title='Date' sortColumnName='launch_date_unix' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
+                                        <th className='font-medium pr-2 py-2'>
+                                            <LaunchDataTableHeader title='Outcome' sortColumnName='launch_success' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
+                                        <th className='font-medium pr-2 py-2'>
+                                            <LaunchDataTableHeader title='Rocket' sortColumnName='rocket_name' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
+                                        <th className='font-medium pr-2 py-2'>
+                                            <LaunchDataTableHeader title='Payload Mass' sortColumnName='kg' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
+                                        <th className='font-medium pr-2 py-2'>
+                                            <LaunchDataTableHeader title='Site' sortColumnName='site_name' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
+                                        <th className='font-medium pr-4 py-2'>
+                                            <LaunchDataTableHeader title='Mission ID' sortColumnName='mission_id' handleColumnClick={handleColumnClick} currentTableSortColumn={sortColumn} sortDescending={sortDescending} />
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
                                     {
                                         launchData.map((data: launchData, idx, array) => (
-                                            <tr key={data.timestampUnix} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
-                                                <td className='py-1.5 pr-2 pl-4'>{data.name}</td>
-                                                <td className='py-2 pr-2'>{new Date(data.timestampUnix * 1000).toLocaleString('en-US', { timeZoneName: "short" })}</td>
-                                                <td className={`py-1.5 pr-2 font-medium transition-colors ${data.success ? "text-teal dark:text-light-teal" : "text-red dark:text-red"}`}>{data.success ? "Success" : "Failure"}</td>
-                                                <td className='py-1.5 pr-2'>{data.rocketName}</td>
-                                                <td className='py-1.5 pr-2'>{data.payloadMassKG} kg</td>
-                                                <td className='py-1.5 pr-2'>{data.siteName}</td>
-                                                <td className='py-1.5 pr-4'>{data.missionId}</td>
+                                            <tr key={data.launch_date_unix} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
+                                                <td className='py-1.5 pr-2 pl-4'>{data.mission_name}</td>
+                                                <td className='py-2 pr-2'>{new Date(data.launch_date_unix * 1000).toLocaleString('en-US', { timeZoneName: "short" })}</td>
+                                                <td className={`py-1.5 pr-2 font-medium transition-colors ${data.launch_success ? "text-teal dark:text-light-teal" : "text-red dark:text-red"}`}>{data.launch_success ? "Success" : "Failure"}</td>
+                                                <td className='py-1.5 pr-2'>{data.rocket_name}</td>
+                                                <td className='py-1.5 pr-2'>{data.kg} kg</td>
+                                                <td className='py-1.5 pr-2'>{data.site_name}</td>
+                                                <td className='py-1.5 pr-4'>{data.mission_id}</td>
                                             </tr>
                                         ))
                                     }
