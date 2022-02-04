@@ -6,7 +6,6 @@ import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 import { CheckIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/solid'
 import { CogIcon, OfficeBuildingIcon } from '@heroicons/react/outline';
-import { LoadingSpinner } from './LoadingSpinner';
 
 const LAUNCH_SITES = gql`
     query GetLaunchSites {

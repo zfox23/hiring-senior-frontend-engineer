@@ -4,9 +4,6 @@ import "@fontsource/metropolis/300.css";
 import "@fontsource/metropolis/400.css";
 import "@fontsource/metropolis/500.css";
 import "@fontsource/metropolis/700.css";
-// import Head from 'next/head'
-// import Image from 'next/image'
-//import styles from '../styles/Home.module.css'
 import React, { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/Header';
 import { launchpadAll, setPageTheme } from '../helpers/helperFunctions';
@@ -15,16 +12,6 @@ import { SummaryCards } from '../components/SummaryCards';
 import { PayloadCountByNationalityCard } from '../components/PayloadCountByNationality';
 import { TopFiveMissionsCard } from '../components/TopFiveMissions';
 import { LaunchDataCard } from '../components/LaunchDataTable';
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-
-
-    return {
-        props: {
-            results: [1, 2, 3],
-        },
-    };
-}
 
 const Home: NextPage = () => {
     const [selectedLaunchpad, setSelectedLaunchpad] = useState(launchpadAll);

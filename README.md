@@ -151,6 +151,8 @@ Here are my initial questions and assumptions I came up with while reading this 
 - It can be jarring for users when client-side containers change size as their contents change size. I'd prefer having reasonable placeholder sizes for containers, as well as subtle, smooth animations for when those containers are populated.
 - GraphQL endpoint request error handling, such as rate limit handling.
 - Multiple quick requests made to data table state changes (like sorting direction and sort column) don't work properly right now, but I'd like that to work properly.
+- Way more code comments. I'd like to think that my code is fairly self-documenting and readable, but I spent way less time making sure that was the case for this project and way more time accomplishing as many of the assignment's goals as possible.
+- The data table should use "actual" payload mass if possible, for some definition of "actual." (What is the payload mass number I'm currently using, anyway? I wish this SpaceX GraphQL API were documented!)
 
 
 -----

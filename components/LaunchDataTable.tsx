@@ -1,7 +1,5 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
-import React, { FormEvent, useEffect, useState } from 'react';
-import { allLaunchesTableData, launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
+import React, {  useEffect, useState } from 'react';
+import { allLaunchesTableData,  launchpad } from '../helpers/helperFunctions';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ArrowsExpandIcon, SearchIcon } from '@heroicons/react/outline';
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid';
