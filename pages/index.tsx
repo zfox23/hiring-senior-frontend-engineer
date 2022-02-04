@@ -11,20 +11,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/Header';
 import { launchpadAll, setPageTheme } from '../helpers/helperFunctions';
 import useBodyClass from '../hooks/useBodyClass';
-import {
-    ApolloClient,
-    InMemoryCache,
-    ApolloProvider
-} from "@apollo/client";
 import { SummaryCards } from '../components/SummaryCards';
 import { PayloadCountByNationalityCard } from '../components/PayloadCountByNationality';
 import { TopFiveMissionsCard } from '../components/TopFiveMissions';
 import { LaunchDataCard } from '../components/LaunchDataTable';
-
-const client = new ApolloClient({
-    uri: 'https://api.spacex.land/graphql/',
-    cache: new InMemoryCache()
-});
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
@@ -52,21 +42,19 @@ const Home: NextPage = () => {
     }
 
     return (
-        <ApolloProvider client={client}>
-            <div className={`container mx-auto p-4 ${fullscreenLaunchData ? "h-screen flex flex-col overflow-y-hidden" : ""}`}>
-                <Header selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
-                <main className={`flex flex-col gap-4 ${fullscreenLaunchData ? "h-full" : ""}`}>
-                    <div id='topContainer' className={`flex flex-col box-border gap-4 transition-all duration-1000 ${fullscreenLaunchData ? "opacity-0 max-h-0 -z-10" : "opacity-100 max-h-[900px]"}`}>
-                        <SummaryCards selectedLaunchpad={selectedLaunchpad} />
-                        <div className='flex flex-wrap gap-4 justify-center items-stretch'>
-                            <PayloadCountByNationalityCard selectedLaunchpad={selectedLaunchpad} />
-                            <TopFiveMissionsCard selectedLaunchpad={selectedLaunchpad} />
-                        </div>
+        <div className={`container mx-auto p-4 ${fullscreenLaunchData ? "h-screen flex flex-col overflow-y-hidden" : ""}`}>
+            <Header selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
+            <main className={`flex flex-col gap-4 ${fullscreenLaunchData ? "h-full" : ""}`}>
+                <div id='topContainer' className={`flex flex-col box-border gap-4 transition-all duration-1000 ${fullscreenLaunchData ? "opacity-0 max-h-0 -z-10" : "opacity-100 max-h-[900px]"}`}>
+                    <SummaryCards selectedLaunchpad={selectedLaunchpad} />
+                    <div className='flex flex-wrap gap-4 justify-center items-stretch'>
+                        <PayloadCountByNationalityCard selectedLaunchpad={selectedLaunchpad} />
+                        <TopFiveMissionsCard selectedLaunchpad={selectedLaunchpad} />
                     </div>
-                    <LaunchDataCard selectedLaunchpad={selectedLaunchpad} fullscreenLaunchData={fullscreenLaunchData} toggleFullscreenLaunchData={toggleFullscreenLaunchData} />
-                </main>
-            </div>
-        </ApolloProvider>
+                </div>
+                <LaunchDataCard selectedLaunchpad={selectedLaunchpad} fullscreenLaunchData={fullscreenLaunchData} toggleFullscreenLaunchData={toggleFullscreenLaunchData} />
+            </main>
+        </div>
     )
 }
 

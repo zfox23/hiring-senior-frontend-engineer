@@ -122,8 +122,6 @@ export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggle
             });
         });
 
-        console.log(tempLaunchData)
-
         let sortedData = tempLaunchData.sort((a: any, b: any) => {
             let initialDataA = a[sortColumn];
             let initialDataB = b[sortColumn];
