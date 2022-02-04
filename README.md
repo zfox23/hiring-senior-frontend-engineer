@@ -1,23 +1,26 @@
-# Zach's README Section
+# Zach's README Section - SpaceX Mission Dashboard Project
 Hello, Harmeet and Maddie and other folks on the Cylera team! This is my submission project for the Senior Frontend Engineer position.
 
-The top section of this README file will be dedicated to project running instructions, initial questions I had, initial assumptions I made development, and a development log (which also contains questions and assumptions). This will help all of us as we move through the interview process.
+The top section of this README file will be dedicated to project running instructions, initial questions I had, initial assumptions I made development, and a development log (which also contains questions and assumptions).
 
 ## How to Run This Project
 1. Ensure you have a recent version of [NodeJS](https://nodejs.org) installed.
     - I'm using v16.13.2 LTS.
-2. Using your favorite command prompt/shell, `cd` into the directory containing this project.
-3. Use the command `npm i` to install this project's dependencies.
-4. Use the command `npm run dev` to run the project.
-5. Open your browser to [http://localhost:3000](http://localhost:3000), and enjoy!
-    - Note: I've only tested this project on Google Chrome v97.0.4692.99 on Windows 11.
+2. Clone this repository to your local storage.
+3. Using your favorite command prompt/shell, `cd` into the directory containing this project.
+4. Use the command `npm i` to install this project's dependencies.
+5. Use the command `npm run dev` to run the project.
+6. Open your browser to [http://localhost:3000](http://localhost:3000), and enjoy! You should see a UI like one pictured below.
+    - Note: I've only tested this project on Google Chrome v98.0.4758.81 on Windows 11.
+
+![A screenshot of Zach's SpaceX Mission Dashboard](./screenshot-light.png)
 
 ## Initial Questions and Assumptions
 Here are my initial questions and assumptions I came up with while reading this document and looking at the mockups:
 
 - ❓ There are no project requirements here pertaining to browser compatibility. On which browsers does this application need to run without bugs?
     - Assumption: It's OK for me to _just pick a browser_ and make sure it works there, as long as I make a note of which browser I'm using.
-        - For this project, I'm using **Google Chrome v97.0.4692.99 on Windows 11**. I will make little to no effort to validate that this Dashboard works on other browsers.
+        - For this project, I'm using **Google Chrome v98.0.4758.81 on Windows 11**. I will make little to no effort to validate that this Dashboard works on other browsers.
 - ❓ There are no project requirements here pertaining to user accessibility.
     - Assumption: Don't think too hard about accessibility.
 - ❓ Why does the project scaffolding include a link to an "About" page when this application is explicitly a one-page app?
@@ -145,15 +148,18 @@ Here are my initial questions and assumptions I came up with while reading this 
 - Regarding server-side filtering/sorting... I'm not sure if I implemented this in the exact way y'all had planned. However, the requests are made by the server to the GraphQL endpoint, and the results are filtered on the server and then sent back to the client - so, in that sense, the code accomplishes the goals.
 - Table sort column and sort direction are stored in browser local storage for user convenience and happiness.
 - Because React state changes are asynchronous, I can't rely on state to reliably tell me if an HTTP request is in-flight (pending) or if a new user request came in while a request was pending. Thus, there will be bugs if a user tries to change a filter parameter while a request is already in-flight. So for this reason, and because I didn't implement too much by way of error handling... slow down, please 😊
+- I saved pagination for last, and I decided I'm going to skip implementing it. I think what I've already implemented so far sufficiently shows off my capabilities, and I know I could implement pagination if necessary (I have implemented it before).
 
-## Improvements I'd Make
+## Some Improvements I'd Make
 - Sometimes, when I make requests to the GraphQL endpoint too quickly, I get rate-limited. That's a problem to be solved.
+- I made some assumptions about data from the GraphQL endpoint that may or may not lead to the desired data being displayed on the page. In a live scenario, I'd want to ensure that I had the correct understanding of the data returned by the endpoint so that I could then ensure that I'm displaying the correct data to the user.
 - It can be jarring for users when client-side containers change size as their contents change size. I'd prefer having reasonable placeholder sizes for containers, as well as subtle, smooth animations for when those containers are populated.
 - GraphQL endpoint request error handling, such as rate limit handling.
 - Multiple quick requests made to data table state changes (like sorting direction and sort column) don't work properly right now, but I'd like that to work properly.
 - Way more code comments. I'd like to think that my code is fairly self-documenting and readable, but I spent way less time making sure that was the case for this project and way more time accomplishing as many of the assignment's goals as possible.
 - The data table should use "actual" payload mass if possible, for some definition of "actual." (What is the payload mass number I'm currently using, anyway? I wish this SpaceX GraphQL API were documented!)
-
+- Data table pagination, with infinite scrolling rather than user-selected pages.
+- A custom favicon 😊
 
 -----
 

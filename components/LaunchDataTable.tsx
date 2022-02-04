@@ -1,5 +1,5 @@
 import React, {  useEffect, useState } from 'react';
-import { allLaunchesTableData,  launchpad } from '../helpers/helperFunctions';
+import { AllLaunchesTableData,  Launchpad } from '../helpers/helperFunctions';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ArrowsExpandIcon, SearchIcon } from '@heroicons/react/outline';
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid';
@@ -33,13 +33,14 @@ const LaunchDataTableHeader = ({ title, sortColumnName, handleColumnClick, curre
     )
 }
 
-export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggleFullscreenLaunchData }: { selectedLaunchpad: launchpad, fullscreenLaunchData: Boolean, toggleFullscreenLaunchData: () => void }) => {
-    const [launchData, setLaunchData] = useState<allLaunchesTableData[]>();
+export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggleFullscreenLaunchData }: { selectedLaunchpad: Launchpad, fullscreenLaunchData: Boolean, toggleFullscreenLaunchData: () => void }) => {
+    const [launchData, setLaunchData] = useState<AllLaunchesTableData[]>();
 
     const [requestInFlight, setRequestInFlight] = useState(false);
     const [searchedMissionName, setSearchedMissionName] = useState<string>();
-    const [limit, setLimit] = useState(10);
-    const [offset, setOffset] = useState(0);
+    // For pagination. Not implemented.
+    // const [limit, setLimit] = useState(10);
+    // const [offset, setOffset] = useState(0);
     const [sortColumn, setSortColumn] = useState((typeof window !== 'undefined' && localStorage.sortColumn) || "launch_date_unix");
     const [sortDescending, setSortDescending] = useState((typeof window !== 'undefined' && localStorage.sortDescending === "true"));
 
@@ -64,8 +65,9 @@ export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggle
             axios.post('/api/allLaunchesTableData', {
                 selectedLaunchpadID: selectedLaunchpad.id,
                 searchedMissionName,
-                limit,
-                offset,
+                // For pagination. Not implemented.
+                // limit,
+                // offset,
                 sortColumn,
                 sortDescending
             })
@@ -131,7 +133,7 @@ export const LaunchDataCard = ({ selectedLaunchpad, fullscreenLaunchData, toggle
                         </thead>
                         <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
                             {
-                                launchData && launchData.map((data: allLaunchesTableData, idx, array) => (
+                                launchData && launchData.map((data: AllLaunchesTableData, idx, array) => (
                                     <tr key={data.launch_date_unix} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
                                         <td className='py-1.5 pr-2 pl-4'>{data.mission_name}</td>
                                         <td className='py-2 pr-2'>{new Date(data.launch_date_unix * 1000).toLocaleString('en-US', { timeZoneName: "short" })}</td>

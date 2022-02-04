@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { ArchiveIcon, ScaleIcon, UserCircleIcon } from '@heroicons/react/outline';
 import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
-import { launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
+import { LaunchesData, Launchpad, MissionsData, PayloadsData } from '../helpers/helperFunctions';
 import { LoadingSpinner } from './LoadingSpinner';
 
 const LAUNCH_SUMMARY_DATA = gql`
@@ -56,7 +56,7 @@ const SummaryCardIcon = ({summaryCardType}: {summaryCardType: SummaryCardType}) 
 
 const SummaryCard = ({ summaryCardType, data, label, loading }: { summaryCardType: SummaryCardType, data?: string | number | undefined, label: string, loading: Boolean }) => {
     return (
-        <div className='flex align-top w-1/3 gap-2 bg-gray-dark dark:bg-dark-gray-dark transition-colors rounded-md p-3'>
+        <div className='flex align-top w-1/3 max-w-[284px] gap-2 bg-gray-dark dark:bg-dark-gray-dark transition-colors rounded-md p-3'>
             <SummaryCardIcon summaryCardType={summaryCardType} />
             <div className='flex flex-col'>
                 {
@@ -73,7 +73,7 @@ const SummaryCard = ({ summaryCardType, data, label, loading }: { summaryCardTyp
     )
 }
 
-export const SummaryCards = ({ selectedLaunchpad }: { selectedLaunchpad: launchpad }) => {
+export const SummaryCards = ({ selectedLaunchpad }: { selectedLaunchpad: Launchpad }) => {
     const [totalPayloads, setTotalPayloads] = useState<number>();
     const [avgPayloadMass, setAvgPayloadMass] = useState<number>();
     const [numUniquePayloadCustomers, setNumUniquePayloadCustomers] = useState<number>();
@@ -109,7 +109,7 @@ export const SummaryCards = ({ selectedLaunchpad }: { selectedLaunchpad: launchp
 
         // 1. Iterate through the `data.launches` array to
         // obtain a `Set()` of relevant, unique Mission IDs.
-        data.launches.forEach((launchesData: launchesData) => {
+        data.launches.forEach((launchesData: LaunchesData) => {
             // Don't parse launches which don't have any associated Mission IDs.
             if (!launchesData.mission_id.length) {
                 return;
@@ -124,25 +124,25 @@ export const SummaryCards = ({ selectedLaunchpad }: { selectedLaunchpad: launchp
         // have launched at the filtered site.
         // Note: As far as I have found, 
         // only missions have payloads associated with them; launches do not have associated payloads.
-        const filteredMissionsData = data.missions.filter((mission: missionsData) => {
+        const filteredMissionsData = data.missions.filter((mission: MissionsData) => {
             return relevantMissionIDs.has(mission.id);
         });
 
         // 3. Obtain a `Set()` of relevant, unique Payload IDs.
         // Note: This logic assumes that any given Payload associated with a given Payload ID
         // is only launched on a single mission. If this isn't true, this data is going to be wrong.
-        filteredMissionsData.forEach((mission: missionsData) => {
+        filteredMissionsData.forEach((mission: MissionsData) => {
             mission.payloads.forEach((payload) => { if (payload && payload.id) { relevantPayloadIDs.add(payload.id); } });
         });
 
         // 4. Filter the `data.payloads` array to obtain only payloads
         // which have launched at the filtered site.
-        const filteredPayloadsData = data.payloads.filter((payload: payloadsData) => {
+        const filteredPayloadsData = data.payloads.filter((payload: PayloadsData) => {
             return relevantPayloadIDs.has(payload.id);
         });
 
         // 5. Using the filtered payloads data, compute the desired values.
-        filteredPayloadsData.forEach((payload: payloadsData) => {
+        filteredPayloadsData.forEach((payload: PayloadsData) => {
             if (!(payload && payload.id && payload.payload_mass_kg)) {
                 return;
             }

@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Listbox, Popover, Switch, Transition } from '@headlessui/react';
-import { launchpad, launchpadAll, setPageTheme } from '../helpers/helperFunctions';
+import { Launchpad, launchpadAll, setPageTheme } from '../helpers/helperFunctions';
 import { usePopper } from 'react-popper';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
@@ -16,7 +16,7 @@ const LAUNCH_SITES = gql`
     }
 `;
 
-const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: launchpad, active: Boolean, selected: Boolean }) => {
+const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: Launchpad, active: Boolean, selected: Boolean }) => {
     return (
         <Listbox.Option
             key={launchpad.id}
@@ -31,7 +31,7 @@ const LaunchPadOption = ({ launchpad, active, selected }: { launchpad: launchpad
     )
 }
 
-const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void }) => {
+const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selectedLaunchpad: Launchpad, setSelectedLaunchpad: (launchpad: Launchpad) => void }) => {
     const { loading, error, data } = useQuery(LAUNCH_SITES);
 
     const popperElRef = React.useRef(null);
@@ -46,8 +46,8 @@ const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selec
             {({ open }) => (
                 <>
                     <div ref={setTargetElement}>
-                        <Listbox.Button className={`inline-flex w-48 h-10 items-center justify-between rounded-md shadow-sm transition-colors ${open ? 'bg-blue' : 'bg-white hover:bg-gray-medium dark:bg-dark-gray-light dark:hover:bg-dark-gray-lighter'}`}>
-                            <OfficeBuildingIcon className={`w-5 h-5 mx-4 transition-colors ${open ? 'text-white' : 'text-blue dark:text-white'}`} />
+                        <Listbox.Button className={`inline-flex w-52 h-10 items-center justify-between rounded-md shadow-sm transition-colors ${open ? 'bg-blue' : 'bg-white hover:bg-gray-medium dark:bg-dark-gray-light dark:hover:bg-dark-gray-lighter'}`}>
+                            <OfficeBuildingIcon className={`w-4 h-4 mx-4 transition-colors ${open ? 'text-white' : 'text-blue dark:text-white'}`} />
                             <span className={`w-28 text-left truncate transition-colors text-sm font-medium ${open ? 'text-white' : 'text-blue dark:text-white'}`}>{selectedLaunchpad.name}</span>
                             {
                                 open ?
@@ -62,6 +62,7 @@ const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selec
                             null
                             :
                             <div
+                                // Ensure popper shows up above other UI elements with `z-10`.
                                 className='z-10'
                                 ref={popperElRef}
                                 style={styles.popper}
@@ -87,7 +88,7 @@ const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selec
                                             )}
                                         </Listbox.Option>
                                         {
-                                            data.launchpads.map((launchpad: launchpad) => (
+                                            data.launchpads.map((launchpad: Launchpad) => (
                                                 <Listbox.Option
                                                     key={launchpad.id}
                                                     value={launchpad}
@@ -108,7 +109,7 @@ const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selec
     )
 }
 
-export const Header = ({ selectedLaunchpad, setSelectedLaunchpad }: { selectedLaunchpad: launchpad, setSelectedLaunchpad: (launchpad: launchpad) => void }) => {
+export const MainIndexHeader = ({ selectedLaunchpad, setSelectedLaunchpad }: { selectedLaunchpad: Launchpad, setSelectedLaunchpad: (launchpad: Launchpad) => void }) => {
     const [darkModeEnabled, setDarkModeEnabled] = useState(typeof window !== 'undefined' && localStorage.theme === 'dark');
     const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);;
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);;

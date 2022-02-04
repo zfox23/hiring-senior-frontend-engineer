@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
-import { launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
+import { LaunchesData, Launchpad, MissionsData, PayloadsData } from '../helpers/helperFunctions';
 import ReactTooltip from 'react-tooltip';
 import NoSsr from './NoSSR';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -51,13 +51,13 @@ const TopFiveMissionsHeader = ({ isDarkTheme }: { isDarkTheme: Boolean }) => {
     )
 }
 
-interface topFiveMissionsData {
+interface TopFiveMissionsData {
     title: string;
     massKg: number;
 }
 
-export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: launchpad }) => {
-    const [topFiveMissionsData, setTopFiveMissionsData] = useState<topFiveMissionsData[]>();
+export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: Launchpad }) => {
+    const [topFiveMissionsData, setTopFiveMissionsData] = useState<TopFiveMissionsData[]>();
 
     const { loading, error, data } = useQuery(TOP_FIVE_MISSIONS_DATA, {
         variables: { selectedLaunchpadID: selectedLaunchpad.id === "custom_all" ? null : selectedLaunchpad.id },
@@ -78,18 +78,18 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
             return;
         }
 
-        let tempTopFiveMissionsData: topFiveMissionsData[] = [];
+        let tempTopFiveMissionsData: TopFiveMissionsData[] = [];
         let relevantMissionIDs = new Set();
 
         // 1. Iterate through the `data.launches` array to
         // obtain a `Set()` of relevant, unique Mission IDs.
-        data.launches.forEach((launchesData: launchesData) => {
+        data.launches.forEach((launchesData: LaunchesData) => {
             // Don't parse launches which don't have any associated Mission IDs.
             if (!launchesData.mission_id.length) {
                 return;
             }
 
-            // `launchesData.mission_id` is an array, although I've only ever noticed
+            // `LaunchesData.mission_id` is an array, although I've only ever noticed
             // that array have a length of 0 or 1.
             launchesData.mission_id.forEach((missionID: string) => { relevantMissionIDs.add(missionID); });
         });
@@ -98,19 +98,19 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
         // have launched at the filtered site.
         // Note: As far as I have found, 
         // only missions have payloads associated with them; launches do not have associated payloads.
-        const filteredMissionsData = data.missions.filter((mission: missionsData) => {
+        const filteredMissionsData = data.missions.filter((mission: MissionsData) => {
             return relevantMissionIDs.has(mission.id);
         });
 
         // 3. Obtain a `Set()` of relevant, unique Payload IDs.
         // Note: This logic assumes that any given Payload associated with a given Payload ID
         // is only launched on a single mission. If this isn't true, this data is going to be wrong.
-        filteredMissionsData.forEach((mission: missionsData) => {
+        filteredMissionsData.forEach((mission: MissionsData) => {
             if (!(mission.payloads && mission.payloads.length > 0 && mission.name)) {
                 return;
             }
 
-            let currentData: topFiveMissionsData = {
+            let currentData: TopFiveMissionsData = {
                 title: mission.name,
                 massKg: 0,
             }
@@ -122,11 +122,11 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
                 }
             });
 
-            const filteredPayloadsData = data.payloads.filter((payload: payloadsData) => {
+            const filteredPayloadsData = data.payloads.filter((payload: PayloadsData) => {
                 return relevantPayloadIDs.has(payload.id);
             });
 
-            filteredPayloadsData.forEach((payload: payloadsData) => {
+            filteredPayloadsData.forEach((payload: PayloadsData) => {
                 if (!payload.payload_mass_kg) {
                     return;
                 }
@@ -142,7 +142,7 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
     const isDarkTheme = typeof window !== 'undefined' && localStorage.theme === "dark";
 
     return (
-        <div className='flex flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
+        <div className='flex grow max-w-lg flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
             <TopFiveMissionsHeader isDarkTheme={isDarkTheme} />
             {
                 loading ?
@@ -152,7 +152,7 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
                     :
                     topFiveMissionsData && topFiveMissionsData?.length > 0 ?
                         <div className='flex justify-center items-center p-4'>
-                            <table className="table-auto">
+                            <table className="table-auto w-full">
                                 <thead className='text-sm transition-colors text-slate-blue dark:text-white text-left'>
                                     <tr>
                                         <th className='font-light'>MISSION</th>
@@ -161,15 +161,15 @@ export const TopFiveMissionsCard = ({ selectedLaunchpad }: { selectedLaunchpad: 
                                 </thead>
                                 <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
                                     {
-                                        topFiveMissionsData.map((data: topFiveMissionsData, idx, array) => (
+                                        topFiveMissionsData.map((data: TopFiveMissionsData, idx, array) => (
                                             <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
-                                                <td className='py-1.5 pr-2 font-medium max-w-[160px]'>
+                                                <td className='py-1.5 pr-2 font-medium max-w-[160px] transition-colors text-dark-purple dark:text-dark-gray-lighter-still'>
                                                     <span>{data.title}</span>
                                                 </td>
                                                 <td className=''>
-                                                    <div className='flex items-center justify-between gap-4'>
+                                                    <div className='flex items-center justify-between gap-4 max-w-[240px]'>
                                                         <span>{Math.round(data.massKg)} kg</span>
-                                                        <div className='w-28 h-1.5 flex gap-0.5'>
+                                                        <div className='w-32 h-1.5 flex gap-0.5'>
                                                             <div className='h-1.5 rounded-full transition-colors bg-black dark:bg-gray-darker' style={{ "width": `${100 * data.massKg / topFiveMissionsData.reduce((currentMax, a) => Math.max(currentMax, a.massKg), 0)}%` }} />
                                                             <div className='h-1.5 rounded-full transition-colors bg-gray-medium dark:bg-dark-gray-lightish grow' />
                                                         </div>

@@ -5,7 +5,7 @@ import "@fontsource/metropolis/400.css";
 import "@fontsource/metropolis/500.css";
 import "@fontsource/metropolis/700.css";
 import React, { useEffect, useRef, useState } from 'react';
-import { Header } from '../components/Header';
+import { MainIndexHeader } from '../components/MainIndexHeader';
 import { launchpadAll, setPageTheme } from '../helpers/helperFunctions';
 import useBodyClass from '../hooks/useBodyClass';
 import { SummaryCards } from '../components/SummaryCards';
@@ -29,8 +29,8 @@ const Home: NextPage = () => {
     }
 
     return (
-        <div className={`container mx-auto p-4 ${fullscreenLaunchData ? "h-screen flex flex-col overflow-y-hidden" : ""}`}>
-            <Header selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
+        <div className={`container mx-auto py-6 px-1 ${fullscreenLaunchData ? "h-screen flex flex-col overflow-y-hidden" : ""}`}>
+            <MainIndexHeader selectedLaunchpad={selectedLaunchpad} setSelectedLaunchpad={setSelectedLaunchpad} />
             <main className={`flex flex-col gap-4 ${fullscreenLaunchData ? "h-full" : ""}`}>
                 <div id='topContainer' className={`flex flex-col box-border gap-4 transition-all duration-1000 ${fullscreenLaunchData ? "opacity-0 max-h-0 -z-10" : "opacity-100 max-h-[900px]"}`}>
                     <SummaryCards selectedLaunchpad={selectedLaunchpad} />

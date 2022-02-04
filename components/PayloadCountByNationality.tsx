@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { colorFromString, launchesData, launchpad, missionsData, payloadsData } from '../helpers/helperFunctions';
+import { colorFromString, LaunchesData, Launchpad, MissionsData, PayloadsData } from '../helpers/helperFunctions';
 import ReactTooltip from 'react-tooltip';
 import NoSsr from './NoSSR';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -51,14 +51,14 @@ const NationalityHeader = ({ isDarkTheme }: { isDarkTheme: Boolean }) => {
     )
 }
 
-interface pieChartData {
+interface PieChartData {
     title: string;
     value: number;
     color: string;
 }
 
-export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedLaunchpad: launchpad }) => {
-    const [pieChartData, setPieChartData] = useState<pieChartData[]>();
+export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedLaunchpad: Launchpad }) => {
+    const [pieChartData, setPieChartData] = useState<PieChartData[]>();
     const [hovered, setHovered] = useState<number | null>(null);
 
     const { loading, error, data } = useQuery(PAYLOAD_COUNT_BY_NATIONALITY_DATA, {
@@ -80,19 +80,19 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
             return;
         }
 
-        let tempPieChartData: pieChartData[] = [];
+        let tempPieChartData: PieChartData[] = [];
         let relevantMissionIDs = new Set();
         let relevantPayloadIDs = new Set();
 
         // 1. Iterate through the `data.launches` array to
         // obtain a `Set()` of relevant, unique Mission IDs.
-        data.launches.forEach((launchesData: launchesData) => {
+        data.launches.forEach((launchesData: LaunchesData) => {
             // Don't parse launches which don't have any associated Mission IDs.
             if (!launchesData.mission_id.length) {
                 return;
             }
 
-            // `launchesData.mission_id` is an array, although I've only ever noticed
+            // `LaunchesData.mission_id` is an array, although I've only ever noticed
             // that array have a length of 0 or 1.
             launchesData.mission_id.forEach((missionID: string) => { relevantMissionIDs.add(missionID); });
         });
@@ -101,30 +101,30 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
         // have launched at the filtered site.
         // Note: As far as I have found, 
         // only missions have payloads associated with them; launches do not have associated payloads.
-        const filteredMissionsData = data.missions.filter((mission: missionsData) => {
+        const filteredMissionsData = data.missions.filter((mission: MissionsData) => {
             return relevantMissionIDs.has(mission.id);
         });
 
         // 3. Obtain a `Set()` of relevant, unique Payload IDs.
         // Note: This logic assumes that any given Payload associated with a given Payload ID
         // is only launched on a single mission. If this isn't true, this data is going to be wrong.
-        filteredMissionsData.forEach((mission: missionsData) => {
+        filteredMissionsData.forEach((mission: MissionsData) => {
             mission.payloads.forEach((payload) => { if (payload && payload.id) { relevantPayloadIDs.add(payload.id); } });
         });
 
         // 4. Filter the `data.payloads` array to obtain only payloads
         // which have launched at the filtered site.
-        const filteredPayloadsData = data.payloads.filter((payload: payloadsData) => {
+        const filteredPayloadsData = data.payloads.filter((payload: PayloadsData) => {
             return relevantPayloadIDs.has(payload.id);
         });
 
         // 5. Using the filtered payloads data, compute the desired values.
-        filteredPayloadsData.forEach((payload: payloadsData) => {
+        filteredPayloadsData.forEach((payload: PayloadsData) => {
             if (!(payload && payload.id && payload.nationality)) {
                 return;
             }
 
-            let found = tempPieChartData.find((data: pieChartData) => { return data.title === payload.nationality; });
+            let found = tempPieChartData.find((data: PieChartData) => { return data.title === payload.nationality; });
             if (!found) {
                 tempPieChartData.push({
                     title: payload.nationality,
@@ -139,7 +139,7 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
         setPieChartData(tempPieChartData.sort((a, b) => { return b.value - a.value; }));
     }, [data]);
 
-    const makeTooltipContent = (hoveredData: pieChartData) => {
+    const makeTooltipContent = (hoveredData: PieChartData) => {
         return (
             <div className='flex items-center p-1'>
                 <span className={`rounded-full w-3 h-3 mr-3 mb-0.5`} style={{ "backgroundColor": hoveredData.color }} />
@@ -152,7 +152,7 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
     const isDarkTheme = typeof window !== 'undefined' && localStorage.theme === "dark";
 
     return (
-        <div className='flex flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
+        <div className='flex grow max-w-lg flex-col bg-white dark:bg-dark-gray-light transition-colors rounded-md shadow-md'>
             <NationalityHeader isDarkTheme={isDarkTheme} />
             {
                 loading ?
@@ -161,7 +161,7 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
                     </div>
                     :
                     pieChartData && pieChartData?.length > 0 ?
-                        <div className='flex justify-center items-start p-4 gap-8'>
+                        <div className='flex justify-start items-center p-4 pl-8 gap-8'>
                             <div className='max-w-[120px]' data-tip="" data-for="chart">
                                 <PieChart
                                     data={pieChartData}
@@ -190,7 +190,7 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
                                     />
                                 </NoSsr>
                             </div>
-                            <div className='flex flex-col'>
+                            <div className='flex flex-col grow'>
                                 <table className="table-auto">
                                     <thead className='text-sm transition-colors text-slate-blue dark:text-white text-left'>
                                         <tr>
@@ -198,14 +198,14 @@ export const PayloadCountByNationalityCard = ({ selectedLaunchpad }: { selectedL
                                             <th className='font-light'>PAYLOADS</th>
                                         </tr>
                                     </thead>
-                                    <tbody className='text-sm transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>
+                                    <tbody className='text-sm'>
                                         {
-                                            pieChartData.map((data: pieChartData, idx, array) => (
+                                            pieChartData.map((data: PieChartData, idx, array) => (
                                                 <tr key={data.title} className={`transition-colors border-gray-light dark:border-dark-gray-medium rounded-full ${idx === array.length - 1 ? "" : "border-b-2"}`}>
-                                                    <td className='flex items-center py-1.5 mr-4'>
-                                                        <span className={`rounded-full w-2 h-2 mr-1 mb-0.5`} style={{ "backgroundColor": data.color }} />
-                                                        <span>{data.title}</span></td>
-                                                    <td>{data.value}</td>
+                                                    <td className='flex items-center py-1.5 mr-12'>
+                                                        <span className={`rounded-full w-2 h-2 mr-2 mb-0.5`} style={{ "backgroundColor": data.color }} />
+                                                        <span className='transition-colors text-dark-purple dark:text-dark-gray-lighter-still'>{data.title}</span></td>
+                                                    <td className='transition-colors text-slate-blue dark:text-dark-gray-lighter-still'>{data.value}</td>
                                                 </tr>
                                             ))
                                         }

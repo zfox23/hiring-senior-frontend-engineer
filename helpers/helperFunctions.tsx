@@ -6,50 +6,43 @@ export const setPageTheme = () => {
     }
 }
 
-export interface launchpad {
+export interface Launchpad {
     id: string;
     name: string;
 }
 export const launchpadAll = { "id": "custom_all", "name": "All Launch Sites" };
 
-export interface launchSite {
+export interface LaunchSite {
     site_id: string;
     site_name?: string;
 }
-export interface rocketPayloadData {
+export interface RocketPayloadData {
     payload_weights: [kg: number];
 }
-export interface rocketData {
+export interface RocketData {
     rocket_name: string;
-    rocket: rocketPayloadData;
+    rocket: RocketPayloadData;
 }
-export interface launchesData {
-    launch_site: launchSite;
+export interface LaunchesData {
+    launch_site: LaunchSite;
     mission_id: [string];
     launch_date_unix?: number;
     launch_success?: Boolean;
     mission_name?: string;
-    rocket?: rocketData;
+    rocket?: RocketData;
 }
-export interface payloadsData {
+export interface PayloadsData {
     id: string;
     customers?: [string];
     payload_mass_kg?: number;
     nationality?: string;
 }
-export interface missionsData {
+export interface MissionsData {
     id: string;
     name?: string;
-    payloads: [payloadsData];
+    payloads: [PayloadsData];
 }
-export interface launchSummaryData {
-    launches: [launchesData];
-    missions: [missionsData];
-    payloads: [payloadsData];
-}
-
-
-export interface allLaunchesTableData {
+export interface AllLaunchesTableData {
     mission_name: string;
     launch_date_unix: number;
     launch_success: Boolean;

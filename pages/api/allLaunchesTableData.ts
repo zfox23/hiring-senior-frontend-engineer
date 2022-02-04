@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { GraphQLClient, gql } from 'graphql-request';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { allLaunchesTableData, launchesData } from '../../helpers/helperFunctions';
+import { AllLaunchesTableData, LaunchesData } from '../../helpers/helperFunctions';
 
 type EndpointResponseData = {
-    data: allLaunchesTableData[],
+    data: AllLaunchesTableData[],
     status: string,
     endpoint: string
 }
@@ -38,8 +38,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const {
         selectedLaunchpadID,
         searchedMissionName,
-        limit,
-        offset,
+        // For pagination. Not implemented.
+        // limit,
+        // offset,
         sortColumn,
         sortDescending } = req.body;
 
@@ -48,8 +49,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             searchedMissionName
     });
     
-    let tempLaunchData: allLaunchesTableData[] = [];
-    data.launches.forEach((launchData: launchesData) => {
+    let tempLaunchData: AllLaunchesTableData[] = [];
+    data.launches.forEach((launchData: LaunchesData) => {
         if (!(launchData.mission_name && launchData.launch_date_unix && typeof launchData.launch_success === "boolean" && launchData.rocket && launchData.launch_site && launchData.launch_site.site_name && launchData.mission_id && launchData.mission_id.length > 0)) {
             return;
         }
@@ -66,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         });
     });
 
-    let sortedData: allLaunchesTableData[] = tempLaunchData.sort((a: any, b: any) => {
+    let sortedData: AllLaunchesTableData[] = tempLaunchData.sort((a: any, b: any) => {
         let initialDataA = a[sortColumn];
         let initialDataB = b[sortColumn];
 
