@@ -48,6 +48,17 @@ export interface launchSummaryData {
     payloads: [payloadsData];
 }
 
+
+export interface allLaunchesTableData {
+    mission_name: string;
+    launch_date_unix: number;
+    launch_success: Boolean;
+    rocket_name: string;
+    kg: number;
+    site_name: string;
+    mission_id: string;
+}
+
 export const randBetween = (seed: number, min: number, max: number) => {
     return min + (Math.floor(Math.abs((Math.sin(seed++) * 10000))) % (max - min));
 }

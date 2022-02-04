@@ -39,16 +39,7 @@ const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selec
     const [targetElement, setTargetElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const { styles, attributes } = usePopper(targetElement, popperElement, {
-        placement: "bottom-end",
-        modifiers: [
-            {
-                name: "offset",
-                enabled: true,
-                options: {
-                    offset: [0, -7]
-                }
-            }
-        ]
+        placement: "bottom-end"
     });
 
     return (
@@ -72,6 +63,7 @@ const LaunchSiteSelector = ({ selectedLaunchpad, setSelectedLaunchpad }: { selec
                             null
                             :
                             <div
+                                className='z-10'
                                 ref={popperElRef}
                                 style={styles.popper}
                                 {...attributes.popper}>

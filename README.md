@@ -4,7 +4,13 @@ Hello, Harmeet and Maddie and other folks on the Cylera team! This is my submiss
 The top section of this README file will be dedicated to project running instructions, initial questions I had, initial assumptions I made development, and a development log (which also contains questions and assumptions). This will help all of us as we move through the interview process.
 
 ## How to Run This Project
-1.
+1. Ensure you have a recent version of [NodeJS](https://nodejs.org) installed.
+    - I'm using v16.13.2 LTS.
+2. Using your favorite command prompt/shell, `cd` into the directory containing this project.
+3. Use the command `npm i` to install this project's dependencies.
+4. Use the command `npm run dev` to run the project.
+5. Open your browser to [http://localhost:3000](http://localhost:3000), and enjoy!
+    - Note: I've only tested this project on Google Chrome v97.0.4692.99 on Windows 11.
 
 ## Initial Questions and Assumptions
 Here are my initial questions and assumptions I came up with while reading this document and looking at the mockups:
@@ -14,13 +20,12 @@ Here are my initial questions and assumptions I came up with while reading this 
         - For this project, I'm using **Google Chrome v97.0.4692.99 on Windows 11**. I will make little to no effort to validate that this Dashboard works on other browsers.
 - ❓ There are no project requirements here pertaining to user accessibility.
     - Assumption: Don't think too hard about accessibility.
-        - Note: 😞
 - ❓ Why does the project scaffolding include a link to an "About" page when this application is explicitly a one-page app?
     - I'm going to remove `about.tsx` from the project entirely.
 - ❓ Why does the Figma design for this application include a "Logout" button? What is that button supposed to actually do?
     - In my implmentation, I'm going to remove the "Logout" button entirely from the UI, since it doesn't serve any known purpose.
 - ❓ Neither the spec below nor the mockup discuss app failure states.
-    - Assumption: I'm going to focus mainly on the "golden path" and not spend much time on app failure states.
+    - Assumption: I'm going to focus mainly on the "golden path" and not spend too much time on app failure states.
 - ❓ Should this application show data about past launches, or should it include data about future launches as well?
     - Assumption: This application will only show data about past launches.
 - ❓ Regarding the "summary statistic cards" at the top of the page:
@@ -29,7 +34,7 @@ Here are my initial questions and assumptions I came up with while reading this 
         - Assumption: The values displayed will be relative to all previous launches until the user adds a "launch site" filter, at which point the values displayed will be relative to all previous launches at that launch site only.
     - What should these cards do when hovered? When clicked? The chevron UI element indicates to me that they're meant to do something, but neither the written spec nor the Figma prototype answers this question.
         - Assumption: These cards shouldn't do anything special when clicked or hovered.
-    - The background colors of these cards change when I hover over the "cog" button.
+    - The background colors of these cards change when I hover over the "cog" button in the Figma mockup.
         - Assumption: This is a bug.
 - ❓ Regarding the "Launch Site" "dropdown" at the top right of the page:
     - I'm guessing that this UI element is the way users switch between launch sites, which affects _all_ of the other data visible on the page. That's a very important UI element. What does it look like when a user clicks on that element? How does it behave? These questions are not answered by the prototype, so I'll have to make some assumptions on my own.
@@ -57,7 +62,7 @@ Here are my initial questions and assumptions I came up with while reading this 
         - Yikes, nevermind: the "vector" format supplied by Sympli is `.pdf`, which is unusable in this context, and I don't want to convert them. I'll use the `.png` assets provided by Sympli instead, but the `1x` versions of those assets won't scale nicely, and I'm not going to put the time in to figure out how to make use of the scaled bitmap assets in this app. If this were a real app, I'd talk to the designer, who could hopefully supply me with `.svg` assets.
         - Another problem with using `.png`s here is that the dark-to-light mode color transitions won't apply to these images, so they'll flicker in place as the dark/light mode transition occurs. Doesn't look great, but I'm not going to worry about that now.
         - I'm going to use Tailwind's `@heroicons` package for some of the iconography that I can't easily extract from the design documents.
-            - **_Hang on a second!_** The iconography used in these design documents _is_ from Heroicons by TailwindCSS! OK - I'm going back now and replacing all of the `.png` icons I used with the SVGs from Heroicons. That's a big win! This also solves the above problem of the icons flickering.
+            - **_Hang on a second!_** The iconography used in these design documents _is_ from Heroicons by TailwindCSS! OK - I'm going back now and replacing all of the `.png` icons I used with the SVGs from Heroicons. That's a big win! This also solves the above problem of the icons flickering when the source images change.
 - ⭐ Cylera provided me with both a near-pixel-perfect design document _and_ textual descriptions of the various components contained within that document. Nice. As I'm developing, I'll be able to reference both documents to build each component to spec, making sure to note questions and assumptions about each component.
 - ❗I wish I had access to the full Figma document rather than just the prototype. If I had access to the document, I'd better be able to determine things like typefaces used, font sizes, exact colors, etc. I'll do my best.
     - Using [WhatTheFont](https://www.myfonts.com/WhatTheFont), I determined that the typeface used throughout the mockup is probably Proxima Nova - which isn't free. I'll use Metropolis, a free close alternative.
@@ -65,10 +70,12 @@ Here are my initial questions and assumptions I came up with while reading this 
 - ❗ I'm "not expected to finish every component." I should be mindful about which components will give me the biggest wins, and which components will be easy to knock out if I make the right architectural decisions early.
     - "Dark mode" comes to mind as an example of a feature that will be easy to knock out if I architect this application correctly. In my cursory look at Tailwind's documentation, it appears as though dark mode is _very_ straightforward to implement, if I correctly use Tailwind's features.
 - ❗ I don't know how to use any of the "Hints" yet, upon first read. Perhaps those will come in handy later.
+
 ### 2. Run the project as-is, just to make sure the project works as provided to me directly by Cylera.
 - The project instructions don't tell me which version of NodeJS I should have installed, nor do they tell me to run `npm i` first to install project dependencies. I will make sure to include those details in my "How to Run This Project" section before submission.
-- The project as-is does not give me much by way of a starting point. None of the existing code is documented, nor is its purpose clear as it pertains to the project. How am I supposed to use what's here, if at all?
+- The project as-is does not give me much by way of a starting point. Little of the existing code is documented, nor is its purpose clear as it pertains to the project. How am I supposed to use what's here, if at all?
     - What is the purpose of `/styles/Home.module.css`?
+
 ### 3. Begin with the page header: the main page wrapper, the header, the page title, the "settings" button, and the "launch site" dropdown. Write this initial code with the goal of making it _easy_ to implement the dark theme later.
 - There's a Tailwind Labs project called "Headless UI": "Completely unstyled, fully accessible UI components,  designed to integrate beautifully with Tailwind CSS." Sounds like exactly what I need for UI elements like the dropdown menu, toggle switch, etc. I'm going to use it.
 - I'm changing the label for the dark mode toggle from "Light / Dark Theme" to "Dark Mode", since the job of the switch is to inform the user whether the state associated with the label is "on" or "off". Using a "Light / Dark Theme" label doesn't inform the user what will happen when the state of the switch is on _or_ off. 
@@ -84,6 +91,7 @@ Here are my initial questions and assumptions I came up with while reading this 
 - I had to add some strange wrappers and logic to the Listbox component in order to avoid animation jank. It's nice and smooth now, though!
 - I took some design liberties with the launch site filter dropdown, since there wasn't much by way of direction there in the mockups.
 - Using the https://api.spacex.land/graphql/ GraphQL API for the launch site filter dropdown was fairly straightforward. Figuring out how to get all possible launch sites was a well-bounded problem, and, despite the lack of documentation for the API, I was able to figure that out.
+
 ### 4. After finishing the header, it's time to move on to the three summary cards, which rely on the selected launch site from the end of (3).
 - I can't find _any_ documentation for this unofficial SpaceX API, so I have to rely on assumptions for what the data keys mean. For example...
     - What's are the actual definitions of the terms "mission" and "launch"?
@@ -115,6 +123,7 @@ Here are my initial questions and assumptions I came up with while reading this 
 - I'm using `react-tooltip` to make tooltip integration easier. Don't want to write my own library for that, either.
 - The cursor targets for the pie chart as designed are too small for my liking, so that's something I'd like to talk to the designer about.
 - The margin between the table header and the table body in the mockup is larger than what I implemented. I don't want to spend too much time trying to re-style `<table>` elements.
+
 ### 6. Onto the "Top 5 Missions" component.
 - Same as the last component - I'm going to be able to use much of what I learned from implementing the previous component here.
 - I'm finding myself having to come up with untenable names for colors because there are so many different colors in this design. I would talk to the designer about the color palette used in the app to minimize the number of colors used, or come up with better names for the colors.
@@ -125,6 +134,7 @@ Here are my initial questions and assumptions I came up with while reading this 
         - This means that the top mission will always show a full "black bar."
     - I know for sure that this wasn't the designer's intention - else the top bar in the mock's data table would be full - so I'd want to talk to the designer about this. However, I think my design does a good job of showing relative payload masses for those top five displayed missions.
 - That was the fastest component I've built so far! I couldn't have done this so quickly without the proper architecture I developed in the previous components.
+
 ### 7. Finally, the data table component!
 - I'm going to start off by doing client-side sorting and filtering and without pagination, then I'll migrate to server-side filtering with pagination. This way, it'll be easiest for me to develop the component UI _first_, then I can take care of the rest of the component requirements.
 - Wow - building this component requires the simplest GraphQL query so far! I can get all of the data I need by querying `launches`. Thank goodness - parsing the returned data and modifying it to fit my needs was one of the biggest pains when developing the previous components.
@@ -132,10 +142,16 @@ Here are my initial questions and assumptions I came up with while reading this 
 - I'm formatting the dates in the table as dates/times relative to the user's time settings, as I think that is most readable and makes the most sense in this context.
 - I noticed that I was spending too long on the table fullscreen animation, so I stopped working on it. There are several improvements I could make to it, but making accordion-like animations with containers of variable height is a challenge, and I'd need to spend more time than I want to right now on getting that perfect. It's _fine_ now.
 - I spent a _long_ time on the "fullscreen table" UI. The current implementation is _fine_ - same as the fullscreen table animation, as noted above - but it relies on some CSS tricks I don't fully understand. (I think that's how CSS works for most people, right?) For example, in order to get the `<table>` to properly constrain to a parent, I had to set one of the parent container's heights to `0`. Why? I don't know. I'm not going to touch it, and I'm going to move on for now. It's fine. It's something I'd want to better understand if this were production code.
+- Regarding server-side filtering/sorting... I'm not sure if I implemented this in the exact way y'all had planned. However, the requests are made by the server to the GraphQL endpoint, and the results are filtered on the server and then sent back to the client - so, in that sense, the code accomplishes the goals.
+- Table sort column and sort direction are stored in browser local storage for user convenience and happiness.
+- Because React state changes are asynchronous, I can't rely on state to reliably tell me if an HTTP request is in-flight (pending) or if a new user request came in while a request was pending. Thus, there will be bugs if a user tries to change a filter parameter while a request is already in-flight. So for this reason, and because I didn't implement too much by way of error handling... slow down, please 😊
 
 ## Improvements I'd Make
 - Sometimes, when I make requests to the GraphQL endpoint too quickly, I get rate-limited. That's a problem to be solved.
-- It can be jarring for users when client-side containers change size as their contents change size. Having 
+- It can be jarring for users when client-side containers change size as their contents change size. I'd prefer having reasonable placeholder sizes for containers, as well as subtle, smooth animations for when those containers are populated.
+- GraphQL endpoint request error handling, such as rate limit handling.
+- Multiple quick requests made to data table state changes (like sorting direction and sort column) don't work properly right now, but I'd like that to work properly.
+
 
 -----
 
